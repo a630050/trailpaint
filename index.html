@@ -944,7 +944,7 @@ function EcoMap() {
           x: p.x,
           y: p.y,
           num: n,
-          title: `景點 ${n}`,
+          title: (t("marker")||"景點")+" "+n,
           desc: "",
           photo: null,
           icon: "pin",
@@ -1480,7 +1480,7 @@ function EcoMap() {
                 x: pos.x,
                 y: pos.y,
                 num,
-                title: `景點 ${num}`,
+                title: (t("marker")||"景點")+" "+num,
                 desc: "",
                 photo: null,
                 icon: "pin",
@@ -1635,7 +1635,7 @@ function EcoMap() {
       alignSelf: "center",
       marginRight: 4
     }
-  }, t("coverLabel")), [["frost", "磨砂"], ["soft", "柔邊"], ["paper", "紙紋"]].map(_ref3 => {
+  }, t("coverLabel")), [["frost", t("frost")], ["soft", t("soft")], ["paper", t("paper")]].map(_ref3 => {
     let [v, label] = _ref3;
     return /*#__PURE__*/React.createElement("button", {
       key: v,
