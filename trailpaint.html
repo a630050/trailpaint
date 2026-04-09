@@ -950,6 +950,7 @@ function EcoMap() {
   const click = useCallback(e => {
     if (!bg || e.target.closest("[data-mk]")) return;
     if (mode === MODE.COVER) return; // cover uses mousedown/up, not click
+    if (selRouteId) { setSelRouteId(null); return; }
     const p = imgXY(e);
     if (p.x < 0 || p.y < 0 || p.x > sz.w || p.y > sz.h) return;
     if (mode === MODE.ROUTE) {
@@ -1841,8 +1842,9 @@ function EcoMap() {
     in: "blurred",
     in2: "SourceGraphic",
     operator: "in"
-  })), /*#__PURE__*/React.createElement("marker", {
-    id: "arr",
+  })), ROUTE_COLORS.map(function(rc) { return /*#__PURE__*/React.createElement("marker", {
+    key: "arr-" + rc.id,
+    id: "arr-" + rc.id,
     viewBox: "0 0 10 10",
     refX: "9",
     refY: "7",
@@ -1851,9 +1853,9 @@ function EcoMap() {
     orient: "auto"
   }, /*#__PURE__*/React.createElement("path", {
     d: "M0 0 L11 7 L0 14z",
-    fill: "#e05a1a",
+    fill: rc.stroke,
     opacity: ".95"
-  }))), covers.map(c => /*#__PURE__*/React.createElement("g", {
+  }))})), covers.map(c => /*#__PURE__*/React.createElement("g", {
     key: c.id
   }, coverStyle !== 'paper' && /*#__PURE__*/React.createElement("clipPath", {
     id: `cp-${c.id}`
@@ -1919,7 +1921,7 @@ function EcoMap() {
     strokeLinejoin: "round",
     strokeDasharray: "12 7",
     opacity: .92,
-    markerEnd: "url(#arr)",
+    markerEnd: "url(#arr-" + rc.id + ")",
     filter: "url(#wob)"
   }), mode === MODE.SELECT && /*#__PURE__*/React.createElement("path", {
     d: pts2path(r.pts),
@@ -1938,7 +1940,8 @@ function EcoMap() {
     strokeWidth: 2.5,
     style: { cursor: "grab" },
     onMouseDown: function(e) { e.stopPropagation(); dragNodeRef.current = { routeId: r.id, ptIndex: pi }; },
-    onTouchStart: function(e) { e.stopPropagation(); e.preventDefault(); dragNodeRef.current = { routeId: r.id, ptIndex: pi }; }
+    onTouchStart: function(e) { e.stopPropagation(); e.preventDefault(); dragNodeRef.current = { routeId: r.id, ptIndex: pi }; },
+    onDoubleClick: function(e) { e.stopPropagation(); if (r.pts.length > 2) deleteRoutePt(r.id, pi); }
   })}))}), cur.length >= 2 && /*#__PURE__*/React.createElement("path", {
     d: pts2path(cur),
     fill: "none",
