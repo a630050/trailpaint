@@ -10,8 +10,13 @@ export default {
   'search.placeholder': 'Search places...',
   'search.noResult': 'No results found',
 
+  // Mode
+  'mode.select': 'Select',
+  'mode.addSpot': 'Add Spot',
+  'mode.drawRoute': 'Draw Route',
+
   // SpotList
-  'spot.empty': 'Click the map to add a spot',
+  'spot.empty': 'Choose "Add Spot" mode and click the map',
   'spot.defaultTitle': 'Spot',
 
   // SpotEditor
@@ -25,8 +30,25 @@ export default {
   'editor.delete': 'Delete Spot',
   'editor.deleteConfirm': 'Delete this spot?',
 
+  // Route
+  'route.finish': 'Finish Route',
+  'route.cancel': 'Cancel',
+  'route.hintStart': 'Click the map to mark the starting point',
+  'route.hintPoints': 'points — keep clicking or press "Finish Route"',
+  'route.editTitle': 'Edit Route',
+  'route.points': 'nodes',
+  'route.color': 'Route Color',
+  'route.editHint': 'Drag nodes to adjust · Double-click to delete',
+  'route.delete': 'Delete Route',
+  'route.deleteConfirm': 'Delete this route?',
+
+  // GPX
+  'gpx.import': '📥 GPX',
+  'gpx.importFailed': 'GPX import failed',
+
   // Export
   'export.failed': 'PNG export failed. Possible CORS restriction on tiles.',
+  'export.3xWarn': '3x export requires more memory and may fail on large maps. Continue?',
   'import.failed': 'Load failed: invalid file format',
 
   // Icons

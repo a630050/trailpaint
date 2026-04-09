@@ -1,6 +1,6 @@
 import MapView from './map/MapView';
 import Sidebar from './core/components/Sidebar';
-import { exportPng, saveProject, loadProject } from './map/ExportButton';
+import { exportPng, saveProject, loadProject, importGpxFile } from './map/ExportButton';
 import { flyTo } from './map/useMapRef';
 import './core/components/Sidebar.css';
 import './App.css';
@@ -13,6 +13,7 @@ export default function App() {
         onExport={exportPng}
         onSave={saveProject}
         onLoad={loadProject}
+        onImportGpx={importGpxFile}
       />
       <div className="map-container">
         <MapView />

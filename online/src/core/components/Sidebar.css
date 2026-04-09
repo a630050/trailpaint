@@ -238,6 +238,150 @@
   text-align: center;
 }
 
+/* ── ModeToolbar ── */
+
+.mode-toolbar {
+  padding: 8px 16px;
+  border-bottom: 1px solid #e5d5c0;
+}
+
+.mode-toolbar__modes {
+  display: flex;
+  gap: 4px;
+}
+
+.mode-toolbar__btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  font-family: Georgia, serif;
+  font-size: 12px;
+  border: 1.5px solid #d4a574;
+  background: #fdf8ef;
+  color: #78350f;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.mode-toolbar__btn:hover {
+  background: #fef3d8;
+}
+
+.mode-toolbar__btn--active {
+  background: #fde68a;
+  border-color: #b45309;
+}
+
+.mode-toolbar__icon {
+  font-size: 14px;
+}
+
+.mode-toolbar__label {
+  font-size: 11px;
+}
+
+.mode-toolbar__draw-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.mode-toolbar__hint {
+  flex: 1;
+  font-size: 11px;
+  color: #8b6a40;
+}
+
+.mode-toolbar__action-btn {
+  font-family: Georgia, serif;
+  font-size: 12px;
+  padding: 5px 10px;
+  border: 1.5px solid #d4a574;
+  background: #fdf8ef;
+  color: #78350f;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.mode-toolbar__action-btn:hover {
+  background: #fef3d8;
+}
+
+.mode-toolbar__action-btn--finish {
+  background: #78350f;
+  color: #fef9e7;
+  border-color: #78350f;
+}
+
+.mode-toolbar__action-btn--finish:hover {
+  background: #92400e;
+}
+
+.mode-toolbar__action-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ── RouteEditor ── */
+
+.route-editor {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.route-editor__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.route-editor__title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #78350f;
+}
+
+.route-editor__info {
+  font-size: 13px;
+  color: #8b6a40;
+}
+
+.route-editor__colors {
+  display: flex;
+  gap: 6px;
+}
+
+.route-editor__color-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.12s, transform 0.1s;
+}
+
+.route-editor__color-btn:hover {
+  transform: scale(1.1);
+}
+
+.route-editor__color-btn--active {
+  border-color: #78350f;
+  transform: scale(1.15);
+}
+
+.route-editor__hint {
+  font-size: 11px;
+  color: #a08060;
+  line-height: 1.4;
+}
+
 /* ── SpotList ── */
 
 .spot-list__empty {

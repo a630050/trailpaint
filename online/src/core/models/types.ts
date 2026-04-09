@@ -1,3 +1,5 @@
+import type { Route } from './routes';
+
 export interface Spot {
   id: string;
   latlng: [number, number]; // [lat, lng]
@@ -10,12 +12,15 @@ export interface Spot {
 }
 
 export interface Project {
-  version: 1;
+  version: 1 | 2;
   name: string;
   center: [number, number]; // [lat, lng]
   zoom: number;
   spots: Spot[];
+  routes: Route[];
 }
+
+export type Mode = 'select' | 'addSpot' | 'drawRoute';
 
 export const DEFAULT_CARD_OFFSET = { x: 0, y: -60 };
 

@@ -2,6 +2,8 @@ import { MapContainer, TileLayer, ZoomControl, useMapEvents, useMap } from 'reac
 import { useProjectStore } from '../core/store/useProjectStore';
 import { useEffect } from 'react';
 import SpotMarker from './SpotMarker';
+import RouteLayer from './RouteLayer';
+import DrawingPreview from './DrawingPreview';
 import { setMapInstance } from './useMapRef';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
@@ -12,17 +14,26 @@ const ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
 
 function MapClickHandler() {
+  const mode = useProjectStore((s) => s.mode);
   const addSpot = useProjectStore((s) => s.addSpot);
-  const selectedSpotId = useProjectStore((s) => s.selectedSpotId);
+  const addDrawingPoint = useProjectStore((s) => s.addDrawingPoint);
   const setSelectedSpot = useProjectStore((s) => s.setSelectedSpot);
+  const setSelectedRoute = useProjectStore((s) => s.setSelectedRoute);
 
   useMapEvents({
     click(e) {
-      // If a spot is selected, deselect it first; otherwise add a new spot
-      if (selectedSpotId) {
-        setSelectedSpot(null);
-      } else {
-        addSpot([e.latlng.lat, e.latlng.lng]);
+      const latlng: [number, number] = [e.latlng.lat, e.latlng.lng];
+      switch (mode) {
+        case 'select':
+          setSelectedSpot(null);
+          setSelectedRoute(null);
+          break;
+        case 'addSpot':
+          addSpot(latlng);
+          break;
+        case 'drawRoute':
+          addDrawingPoint(latlng);
+          break;
       }
     },
   });
@@ -45,7 +56,6 @@ function MapSync() {
     return () => { map.off('moveend', handler); };
   }, [map, setMapView]);
 
-  // Fly to imported project center
   useEffect(() => {
     if (pendingFlyTo) {
       map.flyTo(pendingFlyTo.center, pendingFlyTo.zoom, { duration: 0.8 });
@@ -58,13 +68,7 @@ function MapSync() {
 
 function SpotMarkers() {
   const spots = useProjectStore((s) => s.project.spots);
-  return (
-    <>
-      {spots.map((spot) => (
-        <SpotMarker key={spot.id} spot={spot} />
-      ))}
-    </>
-  );
+  return <>{spots.map((spot) => <SpotMarker key={spot.id} spot={spot} />)}</>;
 }
 
 export default function MapView() {
@@ -87,6 +91,8 @@ export default function MapView() {
       <TileLayer url={TILE_URL} attribution={ATTRIBUTION} />
       <MapClickHandler />
       <MapSync />
+      <RouteLayer />
+      <DrawingPreview />
       <SpotMarkers />
     </MapContainer>
   );

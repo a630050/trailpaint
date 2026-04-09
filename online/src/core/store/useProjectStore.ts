@@ -1,24 +1,53 @@
 import { create } from 'zustand';
-import type { Project, Spot } from '../models/types';
+import type { Project, Spot, Mode } from '../models/types';
 import { DEFAULT_CARD_OFFSET, DEFAULT_CENTER, DEFAULT_ZOOM } from '../models/types';
+import type { Route } from '../models/routes';
+import { ROUTE_COLORS } from '../models/routes';
 import { t } from '../../i18n';
+
+export interface GpxData {
+  tracks: [number, number][][];
+  waypoints: { latlng: [number, number]; name: string }[];
+}
 
 interface ProjectState {
   project: Project;
   selectedSpotId: string | null;
+  selectedRouteId: string | null;
   sidebarOpen: boolean;
+  mode: Mode;
+  currentDrawing: [number, number][];
   pendingFlyTo: { center: [number, number]; zoom: number } | null;
 
+  // Spot actions
   addSpot: (latlng: [number, number]) => void;
   updateSpot: (id: string, patch: Partial<Spot>) => void;
   removeSpot: (id: string) => void;
   swapSpots: (index: number, direction: 'up' | 'down') => void;
   setSelectedSpot: (id: string | null) => void;
+
+  // Route actions
+  addDrawingPoint: (latlng: [number, number]) => void;
+  finishRoute: () => void;
+  cancelDrawing: () => void;
+  addRoute: (route: Route) => void;
+  updateRoutePt: (routeId: string, ptIndex: number, latlng: [number, number]) => void;
+  deleteRoutePt: (routeId: string, ptIndex: number) => void;
+  deleteRoute: (id: string) => void;
+  setRouteColor: (id: string, color: string) => void;
+  setSelectedRoute: (id: string | null) => void;
+
+  // GPX
+  importGpx: (data: GpxData) => void;
+
+  // UI
+  setMode: (mode: Mode) => void;
   setSidebarOpen: (open: boolean) => void;
   setMapView: (center: [number, number], zoom: number) => void;
   setProjectName: (name: string) => void;
   clearPendingFlyTo: () => void;
 
+  // Persistence
   exportJSON: () => string;
   importJSON: (json: string) => void;
 }
@@ -29,19 +58,34 @@ function renumber(spots: Spot[]): Spot[] {
 
 function createEmptyProject(): Project {
   return {
-    version: 1,
+    version: 2,
     name: 'Untitled',
     center: DEFAULT_CENTER,
     zoom: DEFAULT_ZOOM,
     spots: [],
+    routes: [],
   };
+}
+
+// Migrate v1 project to v2
+function migrateProject(data: Record<string, unknown>): Project {
+  const p = data as unknown as Project;
+  if (!p.routes) {
+    return { ...p, version: 2, routes: [] };
+  }
+  return { ...p, version: 2 };
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
   project: createEmptyProject(),
   selectedSpotId: null,
+  selectedRouteId: null,
   sidebarOpen: true,
+  mode: 'select',
+  currentDrawing: [],
   pendingFlyTo: null,
+
+  // ── Spot actions ──
 
   addSpot: (latlng) => {
     const id = crypto.randomUUID();
@@ -60,6 +104,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       return {
         project: { ...s.project, spots: [...s.project.spots, spot] },
         selectedSpotId: id,
+        selectedRouteId: null,
+        mode: 'select',
       };
     });
   },
@@ -92,7 +138,146 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       return { project: { ...s.project, spots: renumber(spots) } };
     }),
 
-  setSelectedSpot: (id) => set({ selectedSpotId: id }),
+  setSelectedSpot: (id) => set({ selectedSpotId: id, selectedRouteId: null }),
+
+  // ── Route actions ──
+
+  addDrawingPoint: (latlng) =>
+    set((s) => ({ currentDrawing: [...s.currentDrawing, latlng] })),
+
+  finishRoute: () =>
+    set((s) => {
+      if (s.currentDrawing.length < 2) return { currentDrawing: [], mode: 'select' };
+      const colorId = ROUTE_COLORS[s.project.routes.length % ROUTE_COLORS.length].id;
+      const route: Route = {
+        id: crypto.randomUUID(),
+        pts: [...s.currentDrawing],
+        color: colorId,
+      };
+      return {
+        project: { ...s.project, routes: [...s.project.routes, route] },
+        currentDrawing: [],
+        mode: 'select',
+        selectedRouteId: route.id,
+        selectedSpotId: null,
+      };
+    }),
+
+  cancelDrawing: () => set({ currentDrawing: [], mode: 'select' }),
+
+  addRoute: (route) =>
+    set((s) => ({
+      project: { ...s.project, routes: [...s.project.routes, route] },
+    })),
+
+  updateRoutePt: (routeId, ptIndex, latlng) =>
+    set((s) => ({
+      project: {
+        ...s.project,
+        routes: s.project.routes.map((r) =>
+          r.id !== routeId ? r : { ...r, pts: r.pts.map((p, i) => (i === ptIndex ? latlng : p)) }
+        ),
+      },
+    })),
+
+  deleteRoutePt: (routeId, ptIndex) =>
+    set((s) => {
+      const route = s.project.routes.find((r) => r.id === routeId);
+      if (!route) return s;
+      const newPts = route.pts.filter((_, i) => i !== ptIndex);
+      if (newPts.length < 2) {
+        return {
+          project: { ...s.project, routes: s.project.routes.filter((r) => r.id !== routeId) },
+          selectedRouteId: s.selectedRouteId === routeId ? null : s.selectedRouteId,
+        };
+      }
+      return {
+        project: {
+          ...s.project,
+          routes: s.project.routes.map((r) =>
+            r.id !== routeId ? r : { ...r, pts: newPts }
+          ),
+        },
+      };
+    }),
+
+  deleteRoute: (id) =>
+    set((s) => ({
+      project: { ...s.project, routes: s.project.routes.filter((r) => r.id !== id) },
+      selectedRouteId: s.selectedRouteId === id ? null : s.selectedRouteId,
+    })),
+
+  setRouteColor: (id, color) =>
+    set((s) => ({
+      project: {
+        ...s.project,
+        routes: s.project.routes.map((r) =>
+          r.id !== id ? r : { ...r, color }
+        ),
+      },
+    })),
+
+  setSelectedRoute: (id) => set({ selectedRouteId: id, selectedSpotId: null }),
+
+  // ── GPX ──
+
+  importGpx: (data) =>
+    set((s) => {
+      const newRoutes: Route[] = data.tracks.map((pts, i) => ({
+        id: crypto.randomUUID(),
+        pts,
+        color: ROUTE_COLORS[(s.project.routes.length + i) % ROUTE_COLORS.length].id,
+      }));
+
+      const baseNum = s.project.spots.length;
+      const newSpots: Spot[] = data.waypoints.map((wp, i) => ({
+        id: crypto.randomUUID(),
+        latlng: wp.latlng,
+        num: baseNum + i + 1,
+        title: wp.name || `${t('spot.defaultTitle')} ${baseNum + i + 1}`,
+        desc: '',
+        photo: null,
+        iconId: 'pin',
+        cardOffset: { ...DEFAULT_CARD_OFFSET },
+      }));
+
+      // Calculate bounds center for flyTo
+      const allPts = [
+        ...newRoutes.flatMap((r) => r.pts),
+        ...newSpots.map((sp) => sp.latlng),
+      ];
+      let center = s.project.center;
+      let zoom = s.project.zoom;
+      if (allPts.length > 0) {
+        const lats = allPts.map((p) => p[0]);
+        const lngs = allPts.map((p) => p[1]);
+        center = [
+          (Math.min(...lats) + Math.max(...lats)) / 2,
+          (Math.min(...lngs) + Math.max(...lngs)) / 2,
+        ];
+        zoom = 12;
+      }
+
+      return {
+        project: {
+          ...s.project,
+          spots: [...s.project.spots, ...newSpots],
+          routes: [...s.project.routes, ...newRoutes],
+        },
+        pendingFlyTo: { center, zoom },
+      };
+    }),
+
+  // ── UI ──
+
+  setMode: (mode) => {
+    const s = get();
+    if (mode !== 'drawRoute' && s.currentDrawing.length > 0) {
+      set({ mode, currentDrawing: [] });
+    } else {
+      set({ mode });
+    }
+  },
 
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
 
@@ -104,13 +289,17 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
   clearPendingFlyTo: () => set({ pendingFlyTo: null }),
 
+  // ── Persistence ──
+
   exportJSON: () => JSON.stringify(get().project, null, 2),
 
   importJSON: (json) => {
-    const data = JSON.parse(json) as Project;
+    const raw = JSON.parse(json);
+    const data = migrateProject(raw);
     set({
       project: data,
       selectedSpotId: null,
+      selectedRouteId: null,
       pendingFlyTo: { center: data.center, zoom: data.zoom },
     });
   },

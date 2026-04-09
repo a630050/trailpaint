@@ -10,8 +10,13 @@ export default {
   'search.placeholder': '搜尋地點...',
   'search.noResult': '找不到結果',
 
+  // Mode
+  'mode.select': '選取',
+  'mode.addSpot': '加景點',
+  'mode.drawRoute': '畫路線',
+
   // SpotList
-  'spot.empty': '點擊地圖新增景點',
+  'spot.empty': '選擇「加景點」模式，點擊地圖新增',
   'spot.defaultTitle': '景點',
 
   // SpotEditor
@@ -25,8 +30,25 @@ export default {
   'editor.delete': '刪除景點',
   'editor.deleteConfirm': '確定刪除此景點？',
 
+  // Route
+  'route.finish': '完成路線',
+  'route.cancel': '取消',
+  'route.hintStart': '點擊地圖標記路線起點',
+  'route.hintPoints': '個點 — 繼續點擊或按「完成路線」',
+  'route.editTitle': '編輯路線',
+  'route.points': '個節點',
+  'route.color': '路線顏色',
+  'route.editHint': '拖曳節點調整路線 · 雙擊節點刪除',
+  'route.delete': '刪除路線',
+  'route.deleteConfirm': '確定刪除此路線？',
+
+  // GPX
+  'gpx.import': '📥 GPX',
+  'gpx.importFailed': 'GPX 匯入失敗',
+
   // Export
   'export.failed': 'PNG 匯出失敗，可能是圖磚 CORS 限制。',
+  'export.3xWarn': '3x 匯出需要較多記憶體，大地圖可能會失敗。繼續？',
   'import.failed': '載入失敗：檔案格式不正確',
 
   // Icons

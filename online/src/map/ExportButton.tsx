@@ -1,16 +1,20 @@
 import { toPng } from 'html-to-image';
 import { useProjectStore } from '../core/store/useProjectStore';
+import { parseGpx } from '../core/utils/gpxParser';
 import { t } from '../i18n';
 
-export function exportPng() {
+export function exportPng(pixelRatio = 2) {
   const projectName = useProjectStore.getState().project.name;
   const mapEl = document.querySelector('.leaflet-container') as HTMLElement | null;
   if (!mapEl) return;
+
+  if (pixelRatio >= 3 && !confirm(t('export.3xWarn'))) return;
 
   setTimeout(async () => {
     try {
       const dataUrl = await toPng(mapEl, {
         cacheBust: true,
+        pixelRatio,
         filter: (node) => {
           const el = node as HTMLElement;
           if (el.classList?.contains('leaflet-control-container')) return false;
@@ -19,7 +23,7 @@ export function exportPng() {
       });
       const link = document.createElement('a');
       const date = new Date().toISOString().slice(0, 10);
-      link.download = `trailpaint-${projectName}-${date}.png`;
+      link.download = `trailpaint-${projectName}-${date}-${pixelRatio}x.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -53,6 +57,24 @@ export function loadProject() {
       useProjectStore.getState().importJSON(text);
     } catch {
       alert(t('import.failed'));
+    }
+  };
+  input.click();
+}
+
+export function importGpxFile() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.gpx';
+  input.onchange = async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    try {
+      const data = parseGpx(text);
+      useProjectStore.getState().importGpx(data);
+    } catch (err) {
+      alert(`${t('gpx.importFailed')}: ${(err as Error).message}`);
     }
   };
   input.click();
