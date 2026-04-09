@@ -51,6 +51,15 @@ export default {
   'export.3xWarn': '3x export requires more memory and may fail on large maps. Continue?',
   'import.failed': 'Load failed: invalid file format',
 
+  // Undo/Redo
+  'undo': 'Undo',
+  'redo': 'Redo',
+
+  // Settings
+  'settings.title': 'Settings',
+  'settings.handDrawn': 'Hand-drawn wobble',
+  'settings.watermark': 'Watermark',
+
   // Icons
   'icon.leaf': 'Plant',
   'icon.flower': 'Flower',

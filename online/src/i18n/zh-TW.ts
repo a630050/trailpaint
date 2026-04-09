@@ -51,6 +51,15 @@ export default {
   'export.3xWarn': '3x 匯出需要較多記憶體，大地圖可能會失敗。繼續？',
   'import.failed': '載入失敗：檔案格式不正確',
 
+  // Undo/Redo
+  'undo': '復原',
+  'redo': '重做',
+
+  // Settings
+  'settings.title': '設定',
+  'settings.handDrawn': '手繪搖晃效果',
+  'settings.watermark': '浮水印',
+
   // Icons
   'icon.leaf': '植物',
   'icon.flower': '花卉',

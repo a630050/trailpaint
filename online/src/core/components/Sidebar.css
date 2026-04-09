@@ -382,6 +382,53 @@
   line-height: 1.4;
 }
 
+/* ── Toolbar secondary row ── */
+
+.sidebar__toolbar--secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-bottom: 1px solid #e5d5c0;
+}
+
+.sidebar__tool-btn--active {
+  background: #fde68a;
+  border-color: #b45309;
+}
+
+/* ── Settings Panel ── */
+
+.settings-panel {
+  padding: 10px 16px;
+  border-bottom: 1px solid #e5d5c0;
+}
+
+.settings-panel__title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #8b6a40;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.settings-panel__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #3b1a06;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.settings-panel__toggle input[type="checkbox"] {
+  accent-color: #b45309;
+  width: 16px;
+  height: 16px;
+}
+
 /* ── SpotList ── */
 
 .spot-list__empty {
@@ -614,7 +661,8 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 85%;
+    max-width: 320px;
     height: 100%;
     z-index: 900;
     margin-left: 0;
@@ -624,7 +672,39 @@
     display: none;
   }
 
+  .sidebar--closed + .sidebar-backdrop {
+    display: none;
+  }
+
   .sidebar-toggle {
     z-index: 950;
+  }
+
+  /* Spot card shrink */
+  .spot-card {
+    width: 140px;
+  }
+
+  .spot-card__title {
+    font-size: 13px;
+  }
+
+  .spot-card__photo {
+    max-height: 80px;
+  }
+}
+
+/* Sidebar backdrop (mobile) */
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 899;
   }
 }

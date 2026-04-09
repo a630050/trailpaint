@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import SpotMarker from './SpotMarker';
 import RouteLayer from './RouteLayer';
 import DrawingPreview from './DrawingPreview';
+import HandDrawnFilter from './HandDrawnFilter';
+import Watermark from './Watermark';
 import { setMapInstance } from './useMapRef';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
@@ -89,11 +91,13 @@ export default function MapView() {
     >
       <ZoomControl position="bottomright" />
       <TileLayer url={TILE_URL} attribution={ATTRIBUTION} />
+      <HandDrawnFilter />
       <MapClickHandler />
       <MapSync />
       <RouteLayer />
       <DrawingPreview />
       <SpotMarkers />
+      <Watermark />
     </MapContainer>
   );
 }

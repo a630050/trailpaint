@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useProjectStore } from '../store/useProjectStore';
 import SpotList from './SpotList';
 import SpotEditor from './SpotEditor';
 import RouteEditor from './RouteEditor';
 import ModeToolbar from './ModeToolbar';
 import SearchBox from './SearchBox';
+import SettingsPanel from './SettingsPanel';
 import { t } from '../../i18n';
 
 interface SidebarProps {
@@ -27,6 +29,8 @@ export default function Sidebar({ onFlyTo, onExport, onSave, onLoad, onImportGpx
   const removeSpot = useProjectStore((s) => s.removeSpot);
   const swapSpots = useProjectStore((s) => s.swapSpots);
 
+  const [showSettings, setShowSettings] = useState(false);
+
   const selectedSpot = spots.find((s) => s.id === selectedSpotId) ?? null;
   const selectedRoute = routes.find((r) => r.id === selectedRouteId) ?? null;
 
@@ -40,6 +44,9 @@ export default function Sidebar({ onFlyTo, onExport, onSave, onLoad, onImportGpx
     onFlyTo(latlng, 14);
   };
 
+  const handleUndo = () => useProjectStore.temporal.getState().undo();
+  const handleRedo = () => useProjectStore.temporal.getState().redo();
+
   return (
     <>
       <button
@@ -49,19 +56,37 @@ export default function Sidebar({ onFlyTo, onExport, onSave, onLoad, onImportGpx
         {sidebarOpen ? '◀' : '▶'}
       </button>
 
+      {sidebarOpen && (
+        <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+      )}
+
       <div className={`sidebar${sidebarOpen ? '' : ' sidebar--closed'}`}>
         <div className="sidebar__header">
           <span className="sidebar__logo">🌿</span>
           <h1 className="sidebar__title">TrailPaint</h1>
         </div>
 
-        {/* Toolbar */}
+        {/* Toolbar row 1: actions */}
         <div className="sidebar__toolbar">
           <button className="sidebar__tool-btn" onClick={() => onExport(2)}>{t('app.export')}</button>
           <button className="sidebar__tool-btn" onClick={onSave}>{t('app.save')}</button>
           <button className="sidebar__tool-btn" onClick={onLoad}>{t('app.load')}</button>
           <button className="sidebar__tool-btn" onClick={onImportGpx}>{t('gpx.import')}</button>
         </div>
+
+        {/* Toolbar row 2: undo/redo + settings */}
+        <div className="sidebar__toolbar sidebar__toolbar--secondary">
+          <button className="sidebar__tool-btn" onClick={handleUndo} title={t('undo')}>↩</button>
+          <button className="sidebar__tool-btn" onClick={handleRedo} title={t('redo')}>↪</button>
+          <span style={{ flex: 1 }} />
+          <button
+            className={`sidebar__tool-btn${showSettings ? ' sidebar__tool-btn--active' : ''}`}
+            onClick={() => setShowSettings(!showSettings)}
+          >⚙️</button>
+        </div>
+
+        {/* Settings panel (collapsible) */}
+        {showSettings && <SettingsPanel />}
 
         {/* Search */}
         <SearchBox onSelect={handleSearchSelect} />

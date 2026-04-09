@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { temporal } from 'zundo';
 import type { Project, Spot, Mode } from '../models/types';
 import { DEFAULT_CARD_OFFSET, DEFAULT_CENTER, DEFAULT_ZOOM } from '../models/types';
 import type { Route } from '../models/routes';
@@ -47,6 +48,12 @@ interface ProjectState {
   setProjectName: (name: string) => void;
   clearPendingFlyTo: () => void;
 
+  // Settings
+  handDrawn: boolean;
+  watermark: boolean;
+  toggleHandDrawn: () => void;
+  toggleWatermark: () => void;
+
   // Persistence
   exportJSON: () => string;
   importJSON: (json: string) => void;
@@ -76,14 +83,18 @@ function migrateProject(data: Record<string, unknown>): Project {
   return { ...p, version: 2 };
 }
 
-export const useProjectStore = create<ProjectState>((set, get) => ({
+export const useProjectStore = create<ProjectState>()(
+  temporal(
+  (set, get) => ({
   project: createEmptyProject(),
   selectedSpotId: null,
   selectedRouteId: null,
   sidebarOpen: true,
-  mode: 'select',
-  currentDrawing: [],
-  pendingFlyTo: null,
+  mode: 'select' as Mode,
+  currentDrawing: [] as [number, number][],
+  pendingFlyTo: null as { center: [number, number]; zoom: number } | null,
+  handDrawn: true,
+  watermark: true,
 
   // ── Spot actions ──
 
@@ -289,6 +300,11 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
   clearPendingFlyTo: () => set({ pendingFlyTo: null }),
 
+  // ── Settings ──
+
+  toggleHandDrawn: () => set((s) => ({ handDrawn: !s.handDrawn })),
+  toggleWatermark: () => set((s) => ({ watermark: !s.watermark })),
+
   // ── Persistence ──
 
   exportJSON: () => JSON.stringify(get().project, null, 2),
@@ -303,4 +319,9 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       pendingFlyTo: { center: data.center, zoom: data.zoom },
     });
   },
-}));
+}),
+  {
+    partialize: (state) => ({ project: state.project }),
+    limit: 50,
+  },
+));

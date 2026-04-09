@@ -4,6 +4,7 @@ import L from 'leaflet';
 import { useProjectStore } from '../core/store/useProjectStore';
 import { getRouteColor } from '../core/models/routes';
 import type { Route } from '../core/models/routes';
+import ArrowHead from './ArrowHead';
 
 export default function RouteLayer() {
   const routes = useProjectStore((s) => s.project.routes);
@@ -26,7 +27,9 @@ function RoutePolyline({ route, selected }: { route: Route; selected: boolean })
   const setSelectedRoute = useProjectStore((s) => s.setSelectedRoute);
   const updateRoutePt = useProjectStore((s) => s.updateRoutePt);
   const deleteRoutePt = useProjectStore((s) => s.deleteRoutePt);
+  const handDrawn = useProjectStore((s) => s.handDrawn);
   const colorDef = getRouteColor(route.color);
+  const filterClass = handDrawn ? 'route-hand-drawn' : '';
 
   const handleClick = useCallback((e: L.LeafletMouseEvent) => {
     L.DomEvent.stopPropagation(e);
@@ -56,9 +59,18 @@ function RoutePolyline({ route, selected }: { route: Route; selected: boolean })
           opacity: 0.9,
           lineCap: 'round',
           lineJoin: 'round',
+          className: filterClass,
         }}
         eventHandlers={{ click: handleClick }}
       />
+      {/* Arrow at end */}
+      {route.pts.length >= 2 && (
+        <ArrowHead
+          from={route.pts[route.pts.length - 2]}
+          to={route.pts[route.pts.length - 1]}
+          color={colorDef.stroke}
+        />
+      )}
       {/* Node markers when selected */}
       {selected &&
         route.pts.map((pt, i) => (

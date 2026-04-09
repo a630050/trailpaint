@@ -38,6 +38,54 @@
   cursor: grabbing;
 }
 
+/* ── Hand-drawn filter on route paths ── */
+
+.route-hand-drawn {
+  filter: url(#hand-drawn);
+}
+
+/* ── Arrow head ── */
+
+.route-arrow {
+  background: none !important;
+  border: none !important;
+}
+
+/* ── Watermark ── */
+
+.watermark {
+  position: absolute;
+  bottom: 28px;
+  right: 8px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.10);
+  padding: 4px 10px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.watermark__icon {
+  font-size: 14px;
+}
+
+.watermark__text {
+  font-family: Georgia, serif;
+  font-size: 11px;
+  color: #fde68a;
+  font-weight: bold;
+}
+
+.watermark__sub {
+  font-family: Georgia, serif;
+  font-size: 9px;
+  color: #fde68a;
+  opacity: 0.6;
+  margin-left: 4px;
+}
+
 /* Connector SVG — sized to overflow so line can reach pin */
 .spot-connector {
   position: absolute;
