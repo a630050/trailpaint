@@ -48,9 +48,6 @@ const evPos = e => {
   } : e;
 };
 
-function haversine(a,b,c,d){var R=6371,x=(c-a)*Math.PI/180,y=(d-b)*Math.PI/180;var z=Math.sin(x/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(y/2)**2;return R*2*Math.atan2(Math.sqrt(z),Math.sqrt(1-z))}
-function parseGPX(xml){var doc=new DOMParser().parseFromString(xml,'text/xml'),pts=[];doc.querySelectorAll('trkpt,rtept').forEach(function(el){pts.push({lat:+el.getAttribute('lat'),lon:+el.getAttribute('lon'),ele:el.querySelector('ele')?+el.querySelector('ele').textContent:null})});if(!pts.length)doc.querySelectorAll('wpt').forEach(function(el){pts.push({lat:+el.getAttribute('lat'),lon:+el.getAttribute('lon'),ele:el.querySelector('ele')?+el.querySelector('ele').textContent:null})});if(!pts.length)return null;if(pts.length>300){var step=(pts.length-1)/299,s=[];for(var i=0;i<299;i++)s.push(pts[Math.round(i*step)]);s.push(pts[pts.length-1]);pts=s}var dist=0,gain=0;for(var i=1;i<pts.length;i++){dist+=haversine(pts[i-1].lat,pts[i-1].lon,pts[i].lat,pts[i].lon);if(pts[i].ele!=null&&pts[i-1].ele!=null&&pts[i].ele>pts[i-1].ele)gain+=pts[i].ele-pts[i-1].ele}return{pts:pts,dist:Math.round(dist*10)/10,gain:Math.round(gain)}}
-function gpxToImage(gpx,w,h){var lats=gpx.pts.map(function(p){return p.lat}),lons=gpx.pts.map(function(p){return p.lon});var a=Math.min.apply(null,lats),b=Math.max.apply(null,lats),c=Math.min.apply(null,lons),d=Math.max.apply(null,lons);var mid=(a+b)/2,cos=Math.cos(mid*Math.PI/180);var gW=(d-c)*cos||.001,gH=(b-a)||.001;var p=.12,sc=Math.min(w*(1-2*p)/gW,h*(1-2*p)/gH);var cx=w/2,cy=h/2,gcx=(c+d)/2*cos,gcy=mid;return gpx.pts.map(function(pt){return{x:cx+(pt.lon*cos-gcx)*sc,y:cy-(pt.lat-gcy)*sc}})}
 
 const MODE = {
   ROUTE: "route",
@@ -803,7 +800,6 @@ function EcoMap() {
   const fileRef = useRef();
   const phoRef = useRef();
   const phoId = useRef(null);
-  const gpxRef = useRef();
 
   // ── Undo / Redo ──
   const undoRef = useRef([]);
@@ -1092,9 +1088,6 @@ function EcoMap() {
     rd.readAsText(f);
     e.target.value = "";
   };
-  var handleGPX=function(txt){if(!bg){alert("Please upload a map first");return}var g=parseGPX(txt);if(!g||g.pts.length<2){alert("Cannot parse GPX");return}setRoutes(function(r){return r.concat([{id:crypto.randomUUID(),pts:gpxToImage(g,sz.w,sz.h),gpx:{dist:g.dist,gain:g.gain}}])})};
-  var onGpxFile=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){handleGPX(ev.target.result)};r.readAsText(f);e.target.value=""};
-  var onDrop=function(e){e.preventDefault();var f=Array.from(e.dataTransfer.files).find(function(x){return x.name.toLowerCase().endsWith(".gpx")});if(!f)return;var r=new FileReader();r.onload=function(ev){handleGPX(ev.target.result)};r.readAsText(f)};
   const imgFilter = hd ? "brightness(1.08) contrast(0.88) saturate(0.75) hue-rotate(3deg)" : "none";
 
   // ── Export preview screen ──────────────────────────────────────────────
@@ -1196,7 +1189,7 @@ function EcoMap() {
     icon: "\uD83D\uDDFA\uFE0F",
     label: "\u4E0A\u50B3",
     onClick: () => fileRef.current.click()
-  }),/*#__PURE__*/React.createElement(TB,{icon:"\uD83D\uDCCC",label:"GPX",onClick:function(){gpxRef.current&&gpxRef.current.click()},disabled:!bg}), /*#__PURE__*/React.createElement(D, null), /*#__PURE__*/React.createElement(TB, {
+  }),/*#__PURE__*/React.createElement(D, null), /*#__PURE__*/React.createElement(TB, {
     icon: "\u270F\uFE0F",
     label: "\u8DEF\u7DDA",
     active: mode === MODE.ROUTE,
@@ -1365,7 +1358,7 @@ function EcoMap() {
       });
       e.target.value = "";
     }
-  }),/*#__PURE__*/React.createElement("input",{ref:gpxRef,type:"file",accept:".gpx",onChange:onGpxFile,style:{display:"none"}})),/*#__PURE__*/React.createElement("div", {
+  }),),/*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
       position: "relative",
@@ -1373,7 +1366,7 @@ function EcoMap() {
       cursor: panning ? "grabbing" : mode === MODE.SELECT ? "grab" : "crosshair"
     },
     ref: mapRef,
-    onDragOver:function(e){e.preventDefault()},onDrop:onDrop,
+    
     onClick: click,
     onWheel: e => {
       if (!bg) return;

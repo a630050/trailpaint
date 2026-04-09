@@ -1,6 +1,6 @@
 # TrailPaint 路小繪
 
-[English](README.en.md)
+[English](README.en.md) | 🌐 [English App](trailpaint-en.html) | [日本語 App](trailpaint-ja.html)
 
 > 把一般的地圖，快速變成漂亮的教育性／導覽性生態地圖
 

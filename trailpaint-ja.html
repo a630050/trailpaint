@@ -2,7 +2,7 @@
 <html lang="zh-TW"><head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>TrailPaint 路小繪</title>
+  <title>TrailPaint トレイルペイント</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
     html,body,#root{height:100%;width:100%;overflow:hidden;}
@@ -13,11 +13,11 @@
     #loading .err{color:#fca5a5;font-size:13px;max-width:280px;text-align:center;padding:12px;background:rgba(220,38,38,0.15);border-radius:8px;border:1px solid rgba(220,38,38,0.3);margin-top:8px;}
   </style>
 </head><body>
-  <!-- TrailPaint 路小繪 | notoriouslab | GPL-3.0 -->
+  <!-- TrailPaint トレイルペイント | notoriouslab | GPL-3.0 -->
   <div id="loading">
     <div class="icon">🌿</div>
-    <div class="title">TrailPaint 路小繪</div>
-    <div class="sub" id="loading-sub">載入中...</div>
+    <div class="title">TrailPaint トレイルペイント</div>
+    <div class="sub" id="loading-sub">読み込み中...</div>
     <div class="maker">notoriouslab</div>
   </div>
   <div id="root"></div>
@@ -58,10 +58,10 @@ const MODE = {
 
 // Route color palette
 const ROUTE_COLORS = [
-  {id:"orange",stroke:"#e05a1a",glow:"rgba(212,153,30,0.22)",hi:"rgba(255,200,120,0.50)",label:"橘"},
-  {id:"blue",stroke:"#2563eb",glow:"rgba(37,99,235,0.18)",hi:"rgba(147,197,253,0.50)",label:"藍"},
-  {id:"green",stroke:"#16a34a",glow:"rgba(22,163,74,0.18)",hi:"rgba(134,239,172,0.50)",label:"綠"},
-  {id:"red",stroke:"#dc2626",glow:"rgba(220,38,38,0.18)",hi:"rgba(252,165,165,0.50)",label:"紅"},
+  {id:"orange",stroke:"#e05a1a",glow:"rgba(212,153,30,0.22)",hi:"rgba(255,200,120,0.50)",label:"オレンジ"},
+  {id:"blue",stroke:"#2563eb",glow:"rgba(37,99,235,0.18)",hi:"rgba(147,197,253,0.50)",label:"青"},
+  {id:"green",stroke:"#16a34a",glow:"rgba(22,163,74,0.18)",hi:"rgba(134,239,172,0.50)",label:"緑"},
+  {id:"red",stroke:"#dc2626",glow:"rgba(220,38,38,0.18)",hi:"rgba(252,165,165,0.50)",label:"赤"},
   {id:"purple",stroke:"#9333ea",glow:"rgba(147,51,234,0.18)",hi:"rgba(216,180,254,0.50)",label:"紫"},
 ];
 
@@ -75,7 +75,7 @@ const ICONS = [
 }, {
   id: "flower",
   emoji: "🌸",
-  label: "花卉"
+  label: "花"
 }, {
   id: "tree",
   emoji: "🌲",
@@ -87,7 +87,7 @@ const ICONS = [
 }, {
   id: "bug",
   emoji: "🦋",
-  label: "昆蟲"
+  label: "昆虫"
 }, {
   id: "water",
   emoji: "💧",
@@ -99,7 +99,7 @@ const ICONS = [
 }, {
   id: "mushroom",
   emoji: "🍄",
-  label: "菌類"
+  label: "キノコ"
 }, {
   id: "rock",
   emoji: "⛰️",
@@ -109,11 +109,11 @@ const ICONS = [
 {
   id: "toilet",
   emoji: "🚻",
-  label: "廁所"
+  label: "トイレ"
 }, {
   id: "bus",
   emoji: "🚌",
-  label: "站牌"
+  label: "バス停"
 }, {
   id: "rest",
   emoji: "🪑",
@@ -121,29 +121,29 @@ const ICONS = [
 }, {
   id: "food",
   emoji: "🥤",
-  label: "餐廳"
+  label: "飲食"
 }, {
   id: "bike",
   emoji: "🚲",
-  label: "腳踏車"
+  label: "自転車"
 }, {
   id: "parking",
   emoji: "🅿️",
-  label: "停車"
+  label: "駐車"
 }, {
   id: "firstaid",
   emoji: "🩺",
-  label: "急救"
+  label: "救急"
 },
 // 通用
 {
   id: "sun",
   emoji: "🔭",
-  label: "觀景"
+  label: "展望"
 }, {
   id: "camera",
   emoji: "📷",
-  label: "拍照"
+  label: "撮影"
 }, {
   id: "warning",
   emoji: "⚠️",
@@ -151,11 +151,11 @@ const ICONS = [
 }, {
   id: "info",
   emoji: "ℹ️",
-  label: "說明"
+  label: "案内"
 }, {
   id: "pin",
   emoji: "📍",
-  label: "標記"
+  label: "ピン"
 }];
 
 // ── 清爽模式 canvas effect ──────────────────────────────────────────────
@@ -544,7 +544,7 @@ async function buildExport(bgImage, imgSize, routes, markers, handdrawn) {
       blurCanvas = null;
     }
     if (coverStyleParam === 'paper') {
-      // 紙紋：暖奶油 + 細緻雜訊 ──────────────────────────────────────────
+      // 紙テクスチャ：暖かいクリーム + 細かいノイズ ──────────────────────────────────────────
       ctx.save();
       rrect(ctx, c.x, c.y, c.w, c.h, 8);
       ctx.clip();
@@ -572,7 +572,7 @@ async function buildExport(bgImage, imgSize, routes, markers, handdrawn) {
       ctx.globalCompositeOperation = 'source-over';
       ctx.restore();
     } else if (coverStyleParam === 'soft') {
-      // 柔邊：模糊 + 邊緣漸層淡出 ──────────────────────────────────────
+      // ソフトエッジ：ぼかし + エッジフェード ──────────────────────────────────────
       if (blurCanvas) {
         ctx.save();
         rrect(ctx, c.x, c.y, c.w, c.h, 0);
@@ -602,7 +602,7 @@ async function buildExport(bgImage, imgSize, routes, markers, handdrawn) {
         ctx.restore();
       }
     } else {
-      // 磨砂（預設）：blur + frost ──────────────────────────────────────
+      // フロスト（デフォルト）：ぼかし + フロスト ──────────────────────────────────────
       ctx.save();
       rrect(ctx, c.x, c.y, c.w, c.h, 8);
       ctx.clip();
@@ -644,7 +644,7 @@ async function buildExport(bgImage, imgSize, routes, markers, handdrawn) {
   }
   // ── Watermark ──────────────────────────────────────────────────────────
   if (showWatermark) {
-    const text = "TrailPaint • 路徑手繪地圖";
+    const text = "TrailPaint • 手描きトレイルマップ";
     const pad = Math.round(Math.min(w, h) * 0.018);
     const fs = Math.round(Math.min(w, h) * 0.022);
     ctx.save();
@@ -960,7 +960,7 @@ function EcoMap() {
           x: p.x,
           y: p.y,
           num: n,
-          title: `景點 ${n}`,
+          title: `スポット ${n}`,
           desc: "",
           photo: null,
           icon: "pin",
@@ -1114,7 +1114,7 @@ function EcoMap() {
       fontSize: 16,
       flex: 1
     }
-  }, "\uD83C\uDFA8 \u532F\u51FA\u9810\u89BD \u2014 \u53F3\u9375\u5716\u7247\u53EF\u5132\u5B58"), /*#__PURE__*/React.createElement("a", {
+  }, "\uD83C\uDFA8 出力\u9810\u89BD \u2014 \u53F3\u9375\u5716\u7247\u53EF\u5132\u5B58"), /*#__PURE__*/React.createElement("a", {
     href: expUrl,
     download: "trailpaint-map.png",
     style: {
@@ -1126,7 +1126,7 @@ function EcoMap() {
       fontSize: 14,
       textDecoration: "none"
     }
-  }, "\u2B07 \u4E0B\u8F09 PNG"), /*#__PURE__*/React.createElement("button", {
+  }, "⬇ PNGダウンロード"), /*#__PURE__*/React.createElement("button", {
     onClick: () => { if (expUrl) URL.revokeObjectURL(expUrl); setExpUrl(null); },
     style: {
       padding: "9px 20px",
@@ -1138,7 +1138,7 @@ function EcoMap() {
       fontWeight: 700,
       fontSize: 14
     }
-  }, "\u2190 \u8FD4\u56DE\u7DE8\u8F2F")), /*#__PURE__*/React.createElement("div", {
+  }, "← 編集に戻る")), /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
       overflow: "auto",
@@ -1187,26 +1187,26 @@ function EcoMap() {
     }
   }, "\uD83C\uDF3F"), /*#__PURE__*/React.createElement(D, null), /*#__PURE__*/React.createElement(TB, {
     icon: "\uD83D\uDDFA\uFE0F",
-    label: "\u4E0A\u50B3",
+    label: "アップ",
     onClick: () => fileRef.current.click()
   }),/*#__PURE__*/React.createElement(D, null), /*#__PURE__*/React.createElement(TB, {
     icon: "\u270F\uFE0F",
-    label: "\u8DEF\u7DDA",
+    label: "ルート",
     active: mode === MODE.ROUTE,
     onClick: () => setMode(MODE.ROUTE)
   }), /*#__PURE__*/React.createElement(TB, {
     icon: "\uD83D\uDCCD",
-    label: "\u666F\u9EDE",
+    label: "スポット",
     active: mode === MODE.MARKER,
     onClick: () => setMode(MODE.MARKER)
   }), /*#__PURE__*/React.createElement(TB, {
     icon: "\u261D\uFE0F",
-    label: "\u9078\u53D6",
+    label: "選択",
     active: mode === MODE.SELECT,
     onClick: () => setMode(MODE.SELECT)
   }), /*#__PURE__*/React.createElement(TB, {
     icon: "\uD83E\uDE79",
-    label: "\u906E\u84CB",
+    label: "カバー",
     active: mode === MODE.COVER,
     onClick: () => setMode(MODE.COVER)
   }), /*#__PURE__*/React.createElement(D, null), /*#__PURE__*/React.createElement("button", {
@@ -1231,14 +1231,14 @@ function EcoMap() {
       fontSize: 8,
       fontWeight: 700
     }
-  }, "\u6E05\u723D"), /*#__PURE__*/React.createElement("span", {
+  }, "フィルタ"), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 8,
       color: hd ? "#fde68a" : "#555"
     }
   }, hd ? "ON" : "OFF")), /*#__PURE__*/React.createElement("button", {
     onClick: () => setWatermark(v => !v),
-    title: "\u6D6E\u6C34\u5370",
+    title: "透かし",
     style: {
       width: 56,
       height: 56,
@@ -1259,7 +1259,7 @@ function EcoMap() {
       fontSize: 8,
       fontWeight: 700
     }
-  }, "\u6D6E\u6C34\u5370"), /*#__PURE__*/React.createElement("span", {
+  }, "透かし"), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 8,
       color: watermark ? "#fde68a" : "#555"
@@ -1276,7 +1276,7 @@ function EcoMap() {
       fontSize: 10,
       cursor: "pointer"
     }
-  }, "\u84CB", covers.length, "\u21A9"), routes.map((r, i) => { var rc = ROUTE_COLORS.find(function(x){return x.id===r.color}) || ROUTE_COLORS[0]; return /*#__PURE__*/React.createElement("button", {
+  }, "C", covers.length, "\u21A9"), routes.map((r, i) => { var rc = ROUTE_COLORS.find(function(x){return x.id===r.color}) || ROUTE_COLORS[0]; return /*#__PURE__*/React.createElement("button", {
     key: r.id,
     onClick: () => delRoute(r.id),
     style: {
@@ -1289,13 +1289,13 @@ function EcoMap() {
       fontSize: 10,
       cursor: "pointer"
     }
-  }, "\u8DEF", i + 1, "\u2715")}), (canUndo || canRedo) && /*#__PURE__*/React.createElement(D, null), canUndo && /*#__PURE__*/React.createElement(TB, {
+  }, "R", i + 1, "\u2715")}), (canUndo || canRedo) && /*#__PURE__*/React.createElement(D, null), canUndo && /*#__PURE__*/React.createElement(TB, {
     icon: "\u21A9",
-    label: "\u5FA9\u539F",
+    label: "元に戻す",
     onClick: doUndo
   }), canRedo && /*#__PURE__*/React.createElement(TB, {
     icon: "\u21AA",
-    label: "\u91CD\u505A",
+    label: "やり直し",
     onClick: doRedo
   }), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1320,7 +1320,7 @@ function EcoMap() {
     disabled: !bg || saving
   }), /*#__PURE__*/React.createElement(TB, {
     icon: "\uD83D\uDCC2",
-    label: "\u8F09\u5165",
+    label: "読込",
     onClick: () => loadRef.current && loadRef.current.click()
   }), /*#__PURE__*/React.createElement("input", {
     ref: fileRef,
@@ -1522,7 +1522,7 @@ function EcoMap() {
                 x: pos.x,
                 y: pos.y,
                 num,
-                title: `景點 ${num}`,
+                title: `スポット ${num}`,
                 desc: "",
                 photo: null,
                 icon: "pin",
@@ -1658,7 +1658,7 @@ function EcoMap() {
       fontWeight: 700,
       zIndex: 10
     }
-  }, "\uD83C\uDFA8 \u6E05\u723D\u6A21\u5F0F"), mode === MODE.COVER && bg && /*#__PURE__*/React.createElement("div", {
+  }, "\uD83C\uDFA8 フィルタ\u6A21\u5F0F"), mode === MODE.COVER && bg && /*#__PURE__*/React.createElement("div", {
     style: {
       position: "absolute",
       bottom: 20,
@@ -1680,7 +1680,7 @@ function EcoMap() {
       alignSelf: "center",
       marginRight: 4
     }
-  }, "\u906E\u84CB\u98A8\u683C"), [["frost", "磨砂"], ["soft", "柔邊"], ["paper", "紙紋"]].map(_ref3 => {
+  }, "カバー\u98A8\u683C"), [["frost", "フロスト"], ["soft", "ソフト"], ["paper", "ペーパー"]].map(_ref3 => {
     let [v, label] = _ref3;
     return /*#__PURE__*/React.createElement("button", {
       key: v,
@@ -1709,7 +1709,7 @@ function EcoMap() {
       cursor: "pointer",
       marginLeft: 4
     }
-  }, "\u21A9 \u64A4\u92B7")), marks.length > 0 && /*#__PURE__*/React.createElement("button", {
+  }, "↩ 元に戻す")), marks.length > 0 && /*#__PURE__*/React.createElement("button", {
     onClick: () => setPanelOpen(v => !v),
     style: {
       position: "absolute",
@@ -1748,7 +1748,7 @@ function EcoMap() {
       padding: "6px 10px",
       zIndex: 11
     }
-  }, "\u7E2E\u653E\u91CD\u7F6E"), !bg ? /*#__PURE__*/React.createElement("div", {
+  }, "ズームリセット"), !bg ? /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "column",
@@ -1769,12 +1769,12 @@ function EcoMap() {
       fontWeight: "bold",
       opacity: 0.8
     }
-  }, "\u4E0A\u50B3\u5730\u5716\u622A\u5716\u958B\u59CB\u88FD\u4F5C"), /*#__PURE__*/React.createElement("div", {
+  }, "アップ\u5730\u5716\u622A\u5716\u958B\u59CB\u88FD\u4F5C"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 13,
       opacity: 0.42
     }
-  }, "\u652F\u63F4 PNG / JPG")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, "PNG / JPG 対応")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     style: {
       width: "100%",
       height: "100%",
@@ -2173,7 +2173,7 @@ function EcoMap() {
       fontSize: 14,
       color: "#78350f"
     }
-  }, "\u21A9 \u64A4\u92B7"), /*#__PURE__*/React.createElement("button", {
+  }, "↩ 元に戻す"), /*#__PURE__*/React.createElement("button", {
     onClick: e => {
       e.stopPropagation();
       e.preventDefault();
@@ -2189,7 +2189,7 @@ function EcoMap() {
       fontSize: 14,
       color: "white"
     }
-  }, "\u2713 \u5B8C\u6210\u8DEF\u7DDA\uFF08", cur.length, "\u9EDE\uFF09"))), panelOpen && sel ? /*#__PURE__*/React.createElement("div", {
+  }, "\u2713 \u5B8C\u6210ルート\uFF08", cur.length, " ポイント）"))), panelOpen && sel ? /*#__PURE__*/React.createElement("div", {
     style: {
       width: isMobile ? '100%' : 300,
       maxWidth: isMobile ? undefined : 300,
@@ -2220,7 +2220,7 @@ function EcoMap() {
       fontWeight: "bold",
       fontSize: 15
     }
-  }, "\u666F\u9EDE ", sel.num, " \u7DE8\u8F2F"), /*#__PURE__*/React.createElement("button", {
+  }, "スポット ", sel.num, " 編集"), /*#__PURE__*/React.createElement("button", {
     onClick: () => setSelId(null),
     style: {
       background: "none",
@@ -2246,7 +2246,7 @@ function EcoMap() {
       fontWeight: 700,
       marginBottom: 6
     }
-  }, "\u9078\u64C7\u5716\u793A"), /*#__PURE__*/React.createElement("div", {
+  }, "アイコン"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       flexWrap: "wrap",
@@ -2279,7 +2279,7 @@ function EcoMap() {
       display: "block",
       marginBottom: 4
     }
-  }, "\u666F\u9EDE\u540D\u7A31"), /*#__PURE__*/React.createElement("input", {
+  }, "スポット\u540D\u7A31"), /*#__PURE__*/React.createElement("input", {
     style: {
       width: "100%",
       border: "2px solid #fde68a",
@@ -2295,7 +2295,7 @@ function EcoMap() {
     onChange: e => upd(selId, {
       title: e.target.value
     }),
-    placeholder: "\u666F\u9EDE\u540D\u7A31\u2026"
+    placeholder: "スポット\u540D\u7A31\u2026"
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: {
       fontSize: 12,
@@ -2304,7 +2304,7 @@ function EcoMap() {
       display: "block",
       marginBottom: 4
     }
-  }, "\u751F\u614B\u8AAA\u660E"), /*#__PURE__*/React.createElement("textarea", {
+  }, "説明"), /*#__PURE__*/React.createElement("textarea", {
     style: {
       width: "100%",
       border: "2px solid #fde68a",
@@ -2323,7 +2323,7 @@ function EcoMap() {
     onChange: e => upd(selId, {
       desc: e.target.value
     }),
-    placeholder: "\u690D\u7269\u3001\u52D5\u7269\u3001\u751F\u614B\u7279\u8272\u3001\u6CE8\u610F\u4E8B\u9805\u2026"
+    placeholder: "植物、動物、生態の特徴、注意事項…"
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: {
       fontSize: 12,
@@ -2332,7 +2332,7 @@ function EcoMap() {
       display: "block",
       marginBottom: 4
     }
-  }, "\u73FE\u5834\u7167\u7247"), sel.photo ? /*#__PURE__*/React.createElement("div", {
+  }, "写真"), sel.photo ? /*#__PURE__*/React.createElement("div", {
     style: {
       position: "relative"
     }
@@ -2362,7 +2362,7 @@ function EcoMap() {
       cursor: "pointer",
       fontSize: 11
     }
-  }, "\u79FB\u9664")) : /*#__PURE__*/React.createElement("button", {
+  }, "削除")) : /*#__PURE__*/React.createElement("button", {
     onClick: () => {
       phoId.current = selId;
       phoRef.current.click();
@@ -2377,7 +2377,7 @@ function EcoMap() {
       color: "#92400e",
       fontSize: 13
     }
-  }, "\uD83D\uDCF7 \u4E0A\u50B3\u7167\u7247")), /*#__PURE__*/React.createElement("button", {
+  }, "\uD83D\uDCF7 アップ\u7167\u7247")), /*#__PURE__*/React.createElement("button", {
     onClick: () => delMark(selId),
     style: {
       background: "#fef2f2",
@@ -2388,7 +2388,7 @@ function EcoMap() {
       cursor: "pointer",
       fontSize: 13
     }
-  }, "\uD83D\uDDD1\uFE0F \u522A\u9664\u6B64\u666F\u9EDE")), marks.length > 0 && /*#__PURE__*/React.createElement("div", {
+  }, "\uD83D\uDDD1\uFE0F \u522A\u9664\u6B64スポット")), marks.length > 0 && /*#__PURE__*/React.createElement("div", {
     style: {
       borderTop: "2px solid #fde68a",
       padding: "10px 12px"
@@ -2401,7 +2401,7 @@ function EcoMap() {
       marginBottom: 5,
       letterSpacing: .8
     }
-  }, "\u6240\u6709\u666F\u9EDE"), /*#__PURE__*/React.createElement("div", {
+  }, "\u6240\u6709スポット"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "column",
@@ -2463,7 +2463,7 @@ function EcoMap() {
       fontWeight: 700,
       marginBottom: 8
     }
-  }, "\u666F\u9EDE\u5217\u8868"), marks.map(m => {
+  }, "スポット\u5217\u8868"), marks.map(m => {
     const ic = ICONS.find(x => x.id === m.icon) || ICONS[11];
     return /*#__PURE__*/React.createElement("div", {
       key: m.id,
