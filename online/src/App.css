@@ -1,0 +1,13 @@
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  background: #1c0a00;
+}
+
+.map-container {
+  flex: 1;
+  height: 100%;
+  position: relative;
+}

@@ -1,0 +1,93 @@
+import { MapContainer, TileLayer, ZoomControl, useMapEvents, useMap } from 'react-leaflet';
+import { useProjectStore } from '../core/store/useProjectStore';
+import { useEffect } from 'react';
+import SpotMarker from './SpotMarker';
+import { setMapInstance } from './useMapRef';
+import 'leaflet/dist/leaflet.css';
+import './MapView.css';
+
+const TILE_URL =
+  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+const ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
+
+function MapClickHandler() {
+  const addSpot = useProjectStore((s) => s.addSpot);
+  const selectedSpotId = useProjectStore((s) => s.selectedSpotId);
+  const setSelectedSpot = useProjectStore((s) => s.setSelectedSpot);
+
+  useMapEvents({
+    click(e) {
+      // If a spot is selected, deselect it first; otherwise add a new spot
+      if (selectedSpotId) {
+        setSelectedSpot(null);
+      } else {
+        addSpot([e.latlng.lat, e.latlng.lng]);
+      }
+    },
+  });
+  return null;
+}
+
+function MapSync() {
+  const map = useMap();
+  const setMapView = useProjectStore((s) => s.setMapView);
+  const pendingFlyTo = useProjectStore((s) => s.pendingFlyTo);
+  const clearPendingFlyTo = useProjectStore((s) => s.clearPendingFlyTo);
+
+  useEffect(() => {
+    setMapInstance(map);
+    const handler = () => {
+      const c = map.getCenter();
+      setMapView([c.lat, c.lng], map.getZoom());
+    };
+    map.on('moveend', handler);
+    return () => { map.off('moveend', handler); };
+  }, [map, setMapView]);
+
+  // Fly to imported project center
+  useEffect(() => {
+    if (pendingFlyTo) {
+      map.flyTo(pendingFlyTo.center, pendingFlyTo.zoom, { duration: 0.8 });
+      clearPendingFlyTo();
+    }
+  }, [pendingFlyTo, map, clearPendingFlyTo]);
+
+  return null;
+}
+
+function SpotMarkers() {
+  const spots = useProjectStore((s) => s.project.spots);
+  return (
+    <>
+      {spots.map((spot) => (
+        <SpotMarker key={spot.id} spot={spot} />
+      ))}
+    </>
+  );
+}
+
+export default function MapView() {
+  const center = useProjectStore((s) => s.project.center);
+  const zoom = useProjectStore((s) => s.project.zoom);
+
+  return (
+    <MapContainer
+      center={center}
+      zoom={zoom}
+      minZoom={3}
+      maxZoom={18}
+      zoomSnap={0.5}
+      zoomDelta={0.5}
+      wheelPxPerZoomLevel={150}
+      style={{ width: '100%', height: '100%' }}
+      zoomControl={false}
+    >
+      <ZoomControl position="bottomright" />
+      <TileLayer url={TILE_URL} attribution={ATTRIBUTION} />
+      <MapClickHandler />
+      <MapSync />
+      <SpotMarkers />
+    </MapContainer>
+  );
+}
