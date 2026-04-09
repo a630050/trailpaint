@@ -59,6 +59,15 @@ const MODE = {
   COVER: "cover"
 };
 
+// Route color palette
+const ROUTE_COLORS = [
+  {id:"orange",stroke:"#e05a1a",glow:"rgba(212,153,30,0.22)",hi:"rgba(255,200,120,0.50)",label:"橘"},
+  {id:"blue",stroke:"#2563eb",glow:"rgba(37,99,235,0.18)",hi:"rgba(147,197,253,0.50)",label:"藍"},
+  {id:"green",stroke:"#16a34a",glow:"rgba(22,163,74,0.18)",hi:"rgba(134,239,172,0.50)",label:"綠"},
+  {id:"red",stroke:"#dc2626",glow:"rgba(220,38,38,0.18)",hi:"rgba(252,165,165,0.50)",label:"紅"},
+  {id:"purple",stroke:"#9333ea",glow:"rgba(147,51,234,0.18)",hi:"rgba(216,180,254,0.50)",label:"紫"},
+];
+
 // Emoji icon set (works natively in SVG text)
 const ICONS = [
 // 生態
@@ -194,8 +203,9 @@ function applyWatercolor(ctx, w, h) {
 }
 
 // Draw one wobbly route segment
-function drawRoute(ctx, pts) {
+function drawRoute(ctx, pts, rc) {
   if (pts.length < 2) return;
+  var c = rc && ROUTE_COLORS.find(function(x){return x.id===rc}) || ROUTE_COLORS[0];
   // Apply hand-drawn wobble (matches SVG feTurbulence displacement)
   const wob = pts.map(p => ({
     x: p.x + Math.sin(p.x * 0.05 + p.y * 0.03) * 2.5,
@@ -206,7 +216,7 @@ function drawRoute(ctx, pts) {
   ctx.beginPath();
   ctx.moveTo(wob[0].x, wob[0].y);
   for (let i = 1; i < wob.length; i++) ctx.lineTo(wob[i].x, wob[i].y);
-  ctx.strokeStyle = "rgba(212,153,30,0.22)";
+  ctx.strokeStyle = c.glow;
   ctx.lineWidth = 16;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -218,7 +228,7 @@ function drawRoute(ctx, pts) {
   ctx.beginPath();
   ctx.moveTo(wob[0].x, wob[0].y);
   for (let i = 1; i < wob.length; i++) ctx.lineTo(wob[i].x, wob[i].y);
-  ctx.strokeStyle = "#e05a1a";
+  ctx.strokeStyle = c.stroke;
   ctx.lineWidth = 10;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -230,7 +240,7 @@ function drawRoute(ctx, pts) {
   ctx.beginPath();
   ctx.moveTo(wob[0].x, wob[0].y);
   for (let i = 1; i < wob.length; i++) ctx.lineTo(wob[i].x, wob[i].y);
-  ctx.strokeStyle = "rgba(255,200,120,0.50)";
+  ctx.strokeStyle = c.hi;
   ctx.lineWidth = 5;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -247,7 +257,7 @@ function drawRoute(ctx, pts) {
   ctx.lineTo(-20, -13);
   ctx.lineTo(-20, 13);
   ctx.closePath();
-  ctx.fillStyle = "#e05a1a";
+  ctx.fillStyle = c.stroke;
   ctx.fill();
   ctx.restore();
 }
@@ -631,7 +641,7 @@ async function buildExport(bgImage, imgSize, routes, markers, handdrawn) {
     ctx.lineWidth = 1;
     ctx.strokeRect(p2, p2, w - p2 * 2, h - p2 * 2);
   }
-  routes.forEach(r => drawRoute(ctx, r.pts));
+  routes.forEach(r => drawRoute(ctx, r.pts, r.color));
   for (const m of markers) {
     await drawMarkerCanvas(ctx, m);
   }
@@ -969,7 +979,8 @@ function EcoMap() {
   const finishRoute = () => {
     if (cur.length >= 2) setRoutes(r => [...r, {
       id: crypto.randomUUID(),
-      pts: [...cur]
+      pts: [...cur],
+      color: ROUTE_COLORS[r.length % ROUTE_COLORS.length].id
     }]);
     setCur([]);
   };
@@ -1246,20 +1257,20 @@ function EcoMap() {
       fontSize: 10,
       cursor: "pointer"
     }
-  }, "\u84CB", covers.length, "\u21A9"), routes.map((r, i) => /*#__PURE__*/React.createElement("button", {
+  }, "\u84CB", covers.length, "\u21A9"), routes.map((r, i) => { var rc = ROUTE_COLORS.find(function(x){return x.id===r.color}) || ROUTE_COLORS[0]; return /*#__PURE__*/React.createElement("button", {
     key: r.id,
     onClick: () => delRoute(r.id),
     style: {
-      width: 46,
+      width: 50,
       height: 20,
       background: "rgba(239,68,68,0.18)",
-      border: "1px solid rgba(239,68,68,0.35)",
+      border: "2px solid " + rc.stroke,
       borderRadius: 4,
       color: "#fca5a5",
       fontSize: 10,
       cursor: "pointer"
     }
-  }, "\u8DEF", i + 1, "\u2715")), (canUndo || canRedo) && /*#__PURE__*/React.createElement(D, null), canUndo && /*#__PURE__*/React.createElement(TB, {
+  }, "\u8DEF", i + 1, "\u2715")}), (canUndo || canRedo) && /*#__PURE__*/React.createElement(D, null), canUndo && /*#__PURE__*/React.createElement(TB, {
     icon: "\u21A9",
     label: "\u5FA9\u539F",
     onClick: doUndo
@@ -1855,12 +1866,12 @@ function EcoMap() {
       strokeWidth: 1.5,
       strokeDasharray: "6,3"
     });
-  })(), routes.map(r => /*#__PURE__*/React.createElement("g", {
+  })(), routes.map(r => { var rc = ROUTE_COLORS.find(function(x){return x.id===r.color}) || ROUTE_COLORS[0]; return /*#__PURE__*/React.createElement("g", {
     key: r.id
   }, /*#__PURE__*/React.createElement("path", {
     d: pts2path(r.pts),
     fill: "none",
-    stroke: "rgba(224,90,26,0.20)",
+    stroke: rc.glow,
     strokeWidth: 10,
     strokeLinecap: "round",
     strokeLinejoin: "round",
@@ -1868,7 +1879,7 @@ function EcoMap() {
   }), /*#__PURE__*/React.createElement("path", {
     d: pts2path(r.pts),
     fill: "none",
-    stroke: "#e05a1a",
+    stroke: rc.stroke,
     strokeWidth: 5,
     strokeLinecap: "round",
     strokeLinejoin: "round",
@@ -1876,7 +1887,7 @@ function EcoMap() {
     opacity: .92,
     markerEnd: "url(#arr)",
     filter: "url(#wob)"
-  }))), cur.length >= 2 && /*#__PURE__*/React.createElement("path", {
+  }))}), cur.length >= 2 && /*#__PURE__*/React.createElement("path", {
     d: pts2path(cur),
     fill: "none",
     stroke: "#d97706",
