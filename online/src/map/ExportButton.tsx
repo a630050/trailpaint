@@ -73,6 +73,37 @@ function drawStatsOverlay(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.restore();
 }
 
+function drawWatermark(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  const fs = Math.round(Math.min(w, h) * 0.018);
+  const pad = Math.round(fs * 0.8);
+  const text = '🌿 TrailPaint 路小繪';
+  const sub = 'notoriouslab';
+
+  ctx.save();
+  ctx.font = `bold ${fs}px Georgia, serif`;
+  const mainW = ctx.measureText(text).width;
+  ctx.font = `${Math.round(fs * 0.7)}px Georgia, serif`;
+  const subW = ctx.measureText(sub).width;
+  const totalW = Math.max(mainW, subW) + pad * 2;
+  const totalH = fs * 2 + pad * 2;
+  const x = w - totalW - pad;
+  const y = h - totalH - pad * 3; // Above stats overlay
+
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(x, y, totalW, totalH);
+
+  ctx.fillStyle = 'rgba(120,120,120,0.45)';
+  ctx.font = `bold ${fs}px Georgia, serif`;
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'top';
+  ctx.fillText(text, w - pad * 2, y + pad);
+
+  ctx.fillStyle = 'rgba(120,120,120,0.30)';
+  ctx.font = `${Math.round(fs * 0.7)}px Georgia, serif`;
+  ctx.fillText(sub, w - pad * 2, y + pad + fs * 1.2);
+  ctx.restore();
+}
+
 export type ExportFormat = '1:1' | '9:16' | '4:3' | 'full';
 
 export function exportPng(pixelRatio = 2, format: ExportFormat = 'full') {
@@ -90,6 +121,7 @@ export function exportPng(pixelRatio = 2, format: ExportFormat = 'full') {
         filter: (node) => {
           const el = node as HTMLElement;
           if (el.classList?.contains('leaflet-control-container')) return false;
+          if (el.classList?.contains('watermark')) return false; // Draw watermark on canvas after crop
           return true;
         },
       });
@@ -121,6 +153,9 @@ export function exportPng(pixelRatio = 2, format: ExportFormat = 'full') {
       ctx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
       drawExportBorder(ctx, cropW, cropH);
       drawStatsOverlay(ctx, cropW, cropH);
+      if (useProjectStore.getState().watermark) {
+        drawWatermark(ctx, cropW, cropH);
+      }
 
       const finalUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
