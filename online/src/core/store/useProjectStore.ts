@@ -6,8 +6,10 @@ import type { Route } from '../models/routes';
 import { ROUTE_COLORS } from '../models/routes';
 import { t } from '../../i18n';
 
+import type { GpxTrackPoint } from '../utils/gpxParser';
+
 export interface GpxData {
-  tracks: [number, number][][];
+  tracks: GpxTrackPoint[][];
   waypoints: { latlng: [number, number]; name: string }[];
 }
 
@@ -193,6 +195,7 @@ export const useProjectStore = create<ProjectState>()(
         id: crypto.randomUUID(),
         pts: [...s.currentDrawing],
         color: colorId,
+        elevations: null,
       };
       return {
         project: { ...s.project, routes: [...s.project.routes, route] },
@@ -263,11 +266,15 @@ export const useProjectStore = create<ProjectState>()(
 
   importGpx: (data) =>
     set((s) => {
-      const newRoutes: Route[] = data.tracks.map((pts, i) => ({
-        id: crypto.randomUUID(),
-        pts,
-        color: ROUTE_COLORS[(s.project.routes.length + i) % ROUTE_COLORS.length].id,
-      }));
+      const newRoutes: Route[] = data.tracks.map((trackPts, i) => {
+        const hasEle = trackPts.some((p) => p.ele !== null);
+        return {
+          id: crypto.randomUUID(),
+          pts: trackPts.map((p) => p.latlng),
+          color: ROUTE_COLORS[(s.project.routes.length + i) % ROUTE_COLORS.length].id,
+          elevations: hasEle ? trackPts.map((p) => p.ele ?? 0) : null,
+        };
+      });
 
       const baseNum = s.project.spots.length;
       const newSpots: Spot[] = data.waypoints.map((wp, i) => ({
@@ -281,7 +288,6 @@ export const useProjectStore = create<ProjectState>()(
         cardOffset: { ...DEFAULT_CARD_OFFSET },
       }));
 
-      // Calculate bounds center for flyTo
       const allPts = [
         ...newRoutes.flatMap((r) => r.pts),
         ...newSpots.map((sp) => sp.latlng),

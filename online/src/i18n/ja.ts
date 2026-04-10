@@ -1,0 +1,98 @@
+export default {
+  // App
+  'app.title': 'TrailPaint トレイルペイント',
+  'app.export': '📷 書き出し',
+  'app.save': '💾 保存',
+  'app.load': '📂 読み込み',
+
+  // Sidebar
+  'sidebar.title': 'TrailPaint',
+  'search.placeholder': '場所を検索...',
+  'search.noResult': '結果が見つかりません',
+
+  // Mode
+  'mode.select': '選択',
+  'mode.addSpot': 'スポット追加',
+  'mode.drawRoute': 'ルート描画',
+
+  // SpotList
+  'spot.empty': '📍「スポット追加」で地図にマーク\n🖊️「ルート描画」でルートを描く\n📷 画像をドラッグして背景を変更',
+  'spot.defaultTitle': 'スポット',
+
+  // SpotEditor
+  'editor.name': '名前',
+  'editor.desc': '説明',
+  'editor.icon': 'アイコン',
+  'editor.photo': '写真',
+  'editor.uploadPhoto': '写真をアップロード',
+  'editor.changePhoto': '写真を変更',
+  'editor.removePhoto': '写真を削除',
+  'editor.delete': 'スポットを削除',
+  'editor.deleteConfirm': 'このスポットを削除しますか？',
+
+  // Route
+  'route.finish': 'ルート完成',
+  'route.cancel': 'キャンセル',
+  'route.hintStart': '地図をクリックしてルートの起点を設定',
+  'route.hintPoints': 'ポイント — クリックを続けるか「ルート完成」を押す',
+  'route.editTitle': 'ルート編集',
+  'route.points': 'ノード',
+  'route.color': 'ルートの色',
+  'route.editHint': 'ノードをドラッグして調整 · ダブルクリックで削除',
+  'route.listTitle': 'ルート',
+  'route.delete': 'ルートを削除',
+  'route.deleteConfirm': 'このルートを削除しますか？',
+
+  // GPX
+  'gpx.import': '📥 GPX',
+  'gpx.importFailed': 'GPXインポートに失敗しました',
+
+  // Export
+  'export.failed': 'PNG書き出しに失敗しました。タイルのCORS制限の可能性があります。',
+  'export.3xWarn': '3x書き出しはメモリを多く使用し、大きな地図では失敗する可能性があります。続行しますか？',
+  'import.failed': '読み込みに失敗しました：ファイル形式が正しくありません',
+
+  // Background
+  'bg.upload': '背景画像をアップロード',
+  'bg.backToMap': '地図に戻る',
+  'bg.dropHint': '画像をここにドロップ',
+
+  // Basemap
+  'basemap.switch': '地図を切替',
+  'basemap.voyager': '標準地図',
+  'basemap.satellite': '衛星写真',
+  'basemap.topo': '等高線',
+  'basemap.dark': 'ダークモード',
+
+  // Undo/Redo
+  'undo': '元に戻す',
+  'redo': 'やり直す',
+
+  // Settings
+  'settings.title': '設定',
+  'settings.handDrawn': '手描き風エフェクト',
+  'settings.watermark': 'ウォーターマーク',
+
+  // Icons
+  'icon.leaf': '植物',
+  'icon.flower': '花',
+  'icon.tree': '樹木',
+  'icon.bird': '鳥',
+  'icon.bug': '昆虫',
+  'icon.water': '水辺',
+  'icon.fish': '魚',
+  'icon.mushroom': 'キノコ',
+  'icon.rock': '岩山',
+  'icon.toilet': 'トイレ',
+  'icon.bus': 'バス停',
+  'icon.rest': '休憩所',
+  'icon.food': 'レストラン',
+  'icon.bike': '自転車',
+  'icon.parking': '駐車場',
+  'icon.firstaid': '救急',
+  'icon.sun': '展望台',
+  'icon.camera': '撮影スポット',
+  'icon.warning': '注意',
+  'icon.info': '案内',
+  'icon.pin': 'マーカー',
+} as const;

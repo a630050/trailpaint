@@ -10,9 +10,11 @@ import { polylineDistance, formatDistance } from '../utils/geo';
 import { getRouteColor } from '../models/routes';
 import { t } from '../../i18n';
 
+import type { ExportFormat } from '../../map/ExportButton';
+
 interface SidebarProps {
   onFlyTo: (latlng: [number, number], zoom?: number) => void;
-  onExport: (pixelRatio: number) => void;
+  onExport: (pixelRatio: number, format?: ExportFormat) => void;
   onSave: () => void;
   onLoad: () => void;
   onImportGpx: () => void;
@@ -81,7 +83,20 @@ export default function Sidebar({ onFlyTo, onExport, onSave, onLoad, onImportGpx
 
         {/* Toolbar row 1 */}
         <div className="sidebar__toolbar">
-          <button className="sidebar__tool-btn" onClick={() => onExport(2)}>{t('app.export')}</button>
+          <div className="sidebar__export-group">
+            <button className="sidebar__tool-btn" onClick={() => onExport(2)}>{t('app.export')}</button>
+            <select
+              className="sidebar__export-format"
+              onChange={(e) => { if (e.target.value) { onExport(2, e.target.value as ExportFormat); e.target.value = ''; } }}
+              defaultValue=""
+            >
+              <option value="" disabled>▼</option>
+              <option value="full">原始比例</option>
+              <option value="1:1">1:1 (IG)</option>
+              <option value="9:16">9:16 (Story)</option>
+              <option value="4:3">4:3</option>
+            </select>
+          </div>
           <button className="sidebar__tool-btn" onClick={onSave}>{t('app.save')}</button>
           <button className="sidebar__tool-btn" onClick={onLoad}>{t('app.load')}</button>
           {!isImageMode && (

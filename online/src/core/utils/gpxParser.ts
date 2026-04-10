@@ -1,5 +1,10 @@
+export interface GpxTrackPoint {
+  latlng: [number, number];
+  ele: number | null;
+}
+
 export interface GpxData {
-  tracks: [number, number][][];
+  tracks: GpxTrackPoint[][];
   waypoints: { latlng: [number, number]; name: string }[];
 }
 
@@ -12,27 +17,27 @@ export function parseGpx(xmlString: string): GpxData {
     throw new Error('非有效 XML 檔案');
   }
 
-  const tracks: [number, number][][] = [];
+  const tracks: GpxTrackPoint[][] = [];
   const waypoints: { latlng: [number, number]; name: string }[] = [];
 
-  // Parse tracks
   doc.querySelectorAll('trk').forEach((trk) => {
     trk.querySelectorAll('trkseg').forEach((seg) => {
-      const pts: [number, number][] = [];
+      const pts: GpxTrackPoint[] = [];
       seg.querySelectorAll('trkpt').forEach((pt) => {
         const lat = parseFloat(pt.getAttribute('lat') ?? '');
         const lon = parseFloat(pt.getAttribute('lon') ?? '');
         if (!isNaN(lat) && !isNaN(lon)) {
-          pts.push([lat, lon]);
+          const eleEl = pt.querySelector('ele');
+          const ele = eleEl ? parseFloat(eleEl.textContent ?? '') : null;
+          pts.push({ latlng: [lat, lon], ele: ele !== null && !isNaN(ele) ? ele : null });
         }
       });
       if (pts.length >= 2) {
-        tracks.push(simplifyIfNeeded(pts, 500));
+        tracks.push(simplifyTrackIfNeeded(pts, 500));
       }
     });
   });
 
-  // Parse waypoints
   doc.querySelectorAll('wpt').forEach((wpt) => {
     const lat = parseFloat(wpt.getAttribute('lat') ?? '');
     const lon = parseFloat(wpt.getAttribute('lon') ?? '');
@@ -52,38 +57,37 @@ export function parseGpx(xmlString: string): GpxData {
   return { tracks, waypoints };
 }
 
-// Douglas-Peucker simplification
-function simplifyIfNeeded(pts: [number, number][], maxPoints: number): [number, number][] {
+// Douglas-Peucker simplification preserving elevation
+function simplifyTrackIfNeeded(pts: GpxTrackPoint[], maxPoints: number): GpxTrackPoint[] {
   if (pts.length <= maxPoints) return pts;
 
-  // Calculate bounding box diagonal for initial tolerance
-  const lats = pts.map((p) => p[0]);
-  const lngs = pts.map((p) => p[1]);
+  const coords = pts.map((p) => p.latlng);
+  const lats = coords.map((c) => c[0]);
+  const lngs = coords.map((c) => c[1]);
   const diagonal = Math.sqrt(
     Math.pow(Math.max(...lats) - Math.min(...lats), 2) +
     Math.pow(Math.max(...lngs) - Math.min(...lngs), 2)
   );
 
   let tolerance = diagonal / 10000;
-  let result = douglasPeucker(pts, tolerance);
-
-  // Iterate until we have <= maxPoints
+  let indices = dpIndices(coords, tolerance);
   let iterations = 0;
-  while (result.length > maxPoints && iterations < 20) {
+  while (indices.length > maxPoints && iterations < 20) {
     tolerance *= 2;
-    result = douglasPeucker(pts, tolerance);
+    indices = dpIndices(coords, tolerance);
     iterations++;
   }
-
-  return result;
+  if (indices.length > maxPoints) {
+    indices = indices.slice(0, maxPoints);
+  }
+  return indices.map((i) => pts[i]);
 }
 
-function douglasPeucker(pts: [number, number][], tolerance: number): [number, number][] {
-  if (pts.length <= 2) return pts;
+function dpIndices(pts: [number, number][], tolerance: number): number[] {
+  if (pts.length <= 2) return pts.map((_, i) => i);
 
   let maxDist = 0;
   let maxIdx = 0;
-
   const start = pts[0];
   const end = pts[pts.length - 1];
 
@@ -96,12 +100,12 @@ function douglasPeucker(pts: [number, number][], tolerance: number): [number, nu
   }
 
   if (maxDist > tolerance) {
-    const left = douglasPeucker(pts.slice(0, maxIdx + 1), tolerance);
-    const right = douglasPeucker(pts.slice(maxIdx), tolerance);
+    const left = dpIndices(pts.slice(0, maxIdx + 1), tolerance);
+    const right = dpIndices(pts.slice(maxIdx), tolerance).map((i) => i + maxIdx);
     return [...left.slice(0, -1), ...right];
   }
 
-  return [start, end];
+  return [0, pts.length - 1];
 }
 
 function perpendicularDistance(

@@ -1,7 +1,8 @@
 import type { Route } from '../models/routes';
 import { ROUTE_COLORS } from '../models/routes';
 import { useProjectStore } from '../store/useProjectStore';
-import { polylineDistance, formatDistance } from '../utils/geo';
+import { polylineDistance, formatDistance, elevationStats, estimateTime } from '../utils/geo';
+import ElevationProfile from './ElevationProfile';
 import { t } from '../../i18n';
 
 interface RouteEditorProps {
@@ -12,6 +13,10 @@ interface RouteEditorProps {
 export default function RouteEditor({ route, onClose }: RouteEditorProps) {
   const setRouteColor = useProjectStore((s) => s.setRouteColor);
   const deleteRoute = useProjectStore((s) => s.deleteRoute);
+  const distKm = polylineDistance(route.pts);
+  const hasEle = !!route.elevations;
+  const stats = hasEle ? elevationStats(route.elevations!) : null;
+  const time = stats ? estimateTime(distKm, stats.ascent) : null;
 
   return (
     <div className="route-editor">
@@ -21,8 +26,21 @@ export default function RouteEditor({ route, onClose }: RouteEditorProps) {
       </div>
 
       <div className="route-editor__info">
-        {formatDistance(polylineDistance(route.pts))} · {route.pts.length} {t('route.points')}
+        {formatDistance(distKm)} · {route.pts.length} {t('route.points')}
+        {time && <> · ⏱️ {time}</>}
       </div>
+
+      {stats && (
+        <div className="route-editor__ele-stats">
+          <span>↗ {stats.ascent}m</span>
+          <span>↘ {stats.descent}m</span>
+          <span>▲ {stats.max}m</span>
+          <span>▼ {stats.min}m</span>
+        </div>
+      )}
+
+      {/* Elevation profile chart */}
+      <ElevationProfile route={route} />
 
       <div className="spot-editor__label">{t('route.color')}</div>
       <div className="route-editor__colors">

@@ -1,7 +1,8 @@
 export interface Route {
   id: string;
-  pts: [number, number][];  // [lat, lng][]
-  color: string;            // ROUTE_COLORS id
+  pts: [number, number][];       // [lat, lng][]
+  color: string;                 // ROUTE_COLORS id
+  elevations: number[] | null;   // meters, same length as pts; null if no elevation data
 }
 
 export interface RouteColorDef {
