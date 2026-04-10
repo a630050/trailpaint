@@ -8,49 +8,67 @@ function sanitizeFilename(name: string): string {
 }
 
 /**
- * Inline tile <img> src as base64 data URLs so html-to-image's SVG foreignObject
- * can render them on iOS Safari/WebKit (which blocks cross-origin images in foreignObject
- * even when crossOrigin is set). Returns a restore function to put original URLs back.
+ * Draw tile images directly to a canvas (bypasses SVG foreignObject entirely).
+ * Works on iOS Safari because canvas.drawImage + crossOrigin is reliable,
+ * unlike foreignObject which blocks cross-origin images on WebKit.
  */
-function inlineTileImages(container: HTMLElement): () => void {
-  const originals: [HTMLImageElement, string][] = [];
-  const tiles = container.querySelectorAll<HTMLImageElement>('.leaflet-tile-pane img');
-
+function drawTilesToCanvas(
+  ctx: CanvasRenderingContext2D,
+  mapEl: HTMLElement,
+  containerRect: DOMRect,
+  pixelRatio: number,
+) {
+  const tiles = mapEl.querySelectorAll<HTMLImageElement>('.leaflet-tile-pane img');
   for (const tile of tiles) {
     if (!tile.complete || !tile.naturalWidth) continue;
-    originals.push([tile, tile.src]);
+    const r = tile.getBoundingClientRect();
     try {
-      const c = document.createElement('canvas');
-      c.width = tile.naturalWidth;
-      c.height = tile.naturalHeight;
-      const ctx = c.getContext('2d')!;
-      ctx.drawImage(tile, 0, 0);
-      tile.src = c.toDataURL();
+      ctx.drawImage(
+        tile,
+        (r.left - containerRect.left) * pixelRatio,
+        (r.top - containerRect.top) * pixelRatio,
+        r.width * pixelRatio,
+        r.height * pixelRatio,
+      );
     } catch {
-      // Canvas tainted — skip, tile will be missing (same as before)
+      // Tainted canvas (tile loaded without CORS) — skip this tile
     }
   }
-
-  return () => {
-    for (const [tile, src] of originals) tile.src = src;
-  };
 }
 
 /**
  * Capture the map as an HTMLImageElement at the given pixelRatio.
- * Used by App.tsx → ExportPreview for base image + re-capture.
+ *
+ * Hybrid approach for iOS Safari compatibility:
+ * 1. Draw tiles to canvas manually (canvas.drawImage — works everywhere with crossOrigin)
+ * 2. Hide tiles, capture overlays (routes, markers, cards) with html-to-image
+ *    (no cross-origin images in foreignObject → works on iOS WebKit)
+ * 3. Composite: tiles at bottom, overlays on top
  */
 export async function captureMap(pixelRatio = 2): Promise<HTMLImageElement> {
   const mapEl = document.querySelector('.leaflet-container') as HTMLElement;
   if (!mapEl) throw new Error('Map element not found');
 
-  // Inline tiles as base64 for iOS Safari compatibility
-  const restoreTiles = inlineTileImages(mapEl);
+  const containerRect = mapEl.getBoundingClientRect();
+  const w = Math.round(containerRect.width * pixelRatio);
+  const h = Math.round(containerRect.height * pixelRatio);
+
+  // Step 1: Draw tiles directly to canvas
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d')!;
+  drawTilesToCanvas(ctx, mapEl, containerRect, pixelRatio);
+
+  // Step 2: Hide tiles, capture everything else with html-to-image
+  const tilePane = mapEl.querySelector('.leaflet-tile-pane') as HTMLElement | null;
+  const origDisplay = tilePane?.style.display ?? '';
+  if (tilePane) tilePane.style.display = 'none';
 
   try {
-    const dataUrl = await toPng(mapEl, {
-      cacheBust: true,
+    const overlayDataUrl = await toPng(mapEl, {
       pixelRatio,
+      backgroundColor: 'rgba(0,0,0,0)',
       filter: (node) => {
         const el = node as HTMLElement;
         if (el.classList?.contains('leaflet-control-container')) return false;
@@ -59,16 +77,27 @@ export async function captureMap(pixelRatio = 2): Promise<HTMLImageElement> {
       },
     });
 
-    const img = new Image();
-    img.src = dataUrl;
+    const overlayImg = new Image();
+    overlayImg.src = overlayDataUrl;
     await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error('Image load failed'));
+      overlayImg.onload = () => resolve();
+      overlayImg.onerror = () => reject(new Error('Overlay capture failed'));
     });
-    return img;
+
+    // Composite: overlays on top of tiles
+    ctx.drawImage(overlayImg, 0, 0);
   } finally {
-    restoreTiles();
+    if (tilePane) tilePane.style.display = origDisplay;
   }
+
+  // Convert canvas to image
+  const finalImg = new Image();
+  finalImg.src = canvas.toDataURL('image/png');
+  await new Promise<void>((resolve, reject) => {
+    finalImg.onload = () => resolve();
+    finalImg.onerror = () => reject(new Error('Image load failed'));
+  });
+  return finalImg;
 }
 
 export function saveProject() {
