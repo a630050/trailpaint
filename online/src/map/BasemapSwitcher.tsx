@@ -52,6 +52,7 @@ export default function BasemapSwitcher() {
     const layer = L.tileLayer(defaultBm.url, {
       attribution: defaultBm.attribution,
       maxZoom: defaultBm.maxZoom ?? 19,
+      crossOrigin: true,
     }).addTo(map);
     layer.setZIndex(0);
     layerRef.current = layer;
@@ -67,6 +68,7 @@ export default function BasemapSwitcher() {
     const layer = L.tileLayer(bm.url, {
       attribution: bm.attribution,
       maxZoom: bm.maxZoom ?? 19,
+      crossOrigin: true,
     }).addTo(map);
     layer.setZIndex(0);
     layerRef.current = layer;
