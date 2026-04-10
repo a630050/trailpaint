@@ -53,7 +53,7 @@ function drawStatsOverlay(ctx: CanvasRenderingContext2D, w: number, h: number) {
   const metrics = ctx.measureText(text);
   const boxW = metrics.width + pad * 2;
   const boxH = fs + pad * 2;
-  const x = w - boxW - pad;
+  const x = pad; // left side
   const y = h - boxH - pad;
 
   // Background pill
