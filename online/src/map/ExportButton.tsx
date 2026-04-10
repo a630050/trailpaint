@@ -60,31 +60,39 @@ export async function captureMap(pixelRatio = 2): Promise<HTMLImageElement> {
   const ctx = canvas.getContext('2d')!;
   drawTilesToCanvas(ctx, mapEl, containerRect, pixelRatio);
 
-  // Step 2: Capture overlays (routes, markers, cards) with html-to-image
-  // Use filter to skip tile pane (avoids DOM mutation + keeps photos rendering on iOS)
-  const overlayDataUrl = await toPng(mapEl, {
-    cacheBust: true,
-    pixelRatio,
-    filter: (node) => {
-      const el = node as HTMLElement;
-      if (el.classList?.contains('leaflet-tile-pane')) return false;
-      if (el.classList?.contains('leaflet-control-container')) return false;
-      if (el.classList?.contains('watermark')) return false;
-      if (el.classList?.contains('locate-button')) return false;
-      if (el.classList?.contains('basemap-switcher')) return false;
-      return true;
-    },
-  });
+  // Step 2: Capture with html-to-image (DON'T filter tiles — let it try)
+  // Make map background transparent so on iOS where tiles fail in foreignObject,
+  // the transparent areas let our canvas-drawn tiles show through.
+  // On desktop tiles render fine in both canvas and foreignObject (harmless double-draw).
+  const origBg = mapEl.style.background;
+  mapEl.style.background = 'transparent';
 
-  const overlayImg = new Image();
-  overlayImg.src = overlayDataUrl;
-  await new Promise<void>((resolve, reject) => {
-    overlayImg.onload = () => resolve();
-    overlayImg.onerror = () => reject(new Error('Overlay capture failed'));
-  });
+  try {
+    const overlayDataUrl = await toPng(mapEl, {
+      cacheBust: true,
+      pixelRatio,
+      filter: (node) => {
+        const el = node as HTMLElement;
+        if (el.classList?.contains('leaflet-control-container')) return false;
+        if (el.classList?.contains('watermark')) return false;
+        if (el.classList?.contains('locate-button')) return false;
+        if (el.classList?.contains('basemap-switcher')) return false;
+        return true;
+      },
+    });
 
-  // Composite: overlays on top of tiles
-  ctx.drawImage(overlayImg, 0, 0);
+    const overlayImg = new Image();
+    overlayImg.src = overlayDataUrl;
+    await new Promise<void>((resolve, reject) => {
+      overlayImg.onload = () => resolve();
+      overlayImg.onerror = () => reject(new Error('Overlay capture failed'));
+    });
+
+    // Composite: html-to-image result on top of canvas tiles
+    ctx.drawImage(overlayImg, 0, 0);
+  } finally {
+    mapEl.style.background = origBg;
+  }
 
   // Convert canvas to image
   const finalImg = new Image();
