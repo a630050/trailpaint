@@ -99,7 +99,7 @@ export default function Sidebar({ onFlyTo, onOpenExportPreview, onSave, onLoad, 
           {isImageMode && (
             <button className="sidebar__tool-btn" onClick={() => {
               const hasData = spots.length > 0 || routes.length > 0;
-              if (!hasData || confirm('回到地圖模式會清除現有景點和路線，確定嗎？')) clearBackgroundImage();
+              if (!hasData || confirm(t('bg.clearConfirm'))) clearBackgroundImage();
             }} title={t('bg.backToMap')}>
               ↩ {t('bg.backToMap')}
             </button>

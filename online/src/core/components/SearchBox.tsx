@@ -90,8 +90,8 @@ export default function SearchBox({ onSelect }: SearchBoxProps) {
         setLoading(false);
       })
       .catch((err) => {
-        if (err instanceof DOMException && err.name === 'AbortError') return;
         setLoading(false);
+        if (err instanceof DOMException && err.name === 'AbortError') return;
       });
   }, []);
 

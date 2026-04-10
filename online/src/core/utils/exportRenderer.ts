@@ -3,6 +3,24 @@ import type { Route } from '../models/routes';
 
 export type ExportBorderStyle = 'classic' | 'paper' | 'minimal';
 export type ExportFormat = '1:1' | '9:16' | '4:3' | 'full';
+
+/** roundRect with fallback for Safari < 16 / Chrome < 112 */
+function roundRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  if (ctx.roundRect) {
+    ctx.roundRect(x, y, w, h, r);
+  } else {
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+}
 export type StyleFilter = 'original' | 'watercolor' | 'sketch' | 'vintage' | 'comic';
 
 /* ── Crop ── */
@@ -104,7 +122,7 @@ export function drawExportBorder(
     ctx.strokeStyle = 'rgba(100,100,100,0.25)';
     ctx.lineWidth = Math.max(1, Math.round(Math.min(w, h) * 0.002));
     ctx.beginPath();
-    ctx.roundRect(margin, margin, w - margin * 2, h - margin * 2, radius);
+    roundRectPath(ctx, margin, margin, w - margin * 2, h - margin * 2, radius);
     ctx.stroke();
     ctx.restore();
   }
@@ -167,7 +185,7 @@ export function drawStatsOverlay(
 
   ctx.fillStyle = 'rgba(253,248,239,0.88)';
   ctx.beginPath();
-  ctx.roundRect(x, y, boxW, boxH, fs * 0.4);
+  roundRectPath(ctx, x, y, boxW, boxH, fs * 0.4);
   ctx.fill();
   ctx.strokeStyle = 'rgba(180,130,60,0.32)';
   ctx.lineWidth = 1;

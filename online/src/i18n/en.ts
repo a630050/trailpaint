@@ -83,10 +83,16 @@ export default {
   'export.filter.vintage': 'Vintage',
   'export.filter.comic': 'Comic',
 
+  // Import
+  'import.tooLarge': 'File too large (max 20MB)',
+
   // Background
   'bg.upload': 'Upload image',
   'bg.backToMap': 'Back to map',
   'bg.dropHint': 'Drop image here',
+  'bg.tooLarge': 'Image file too large (max 10MB)',
+  'bg.switchConfirm': 'Switching background will clear existing spots and routes. Continue?',
+  'bg.clearConfirm': 'Returning to map mode will clear existing spots and routes. Continue?',
 
   // Locate
   'locate.title': 'Locate me',

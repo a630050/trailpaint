@@ -108,11 +108,21 @@ function migrateProject(data: Record<string, unknown>): Project {
     return { ...p, version: 2, routes: [] };
   }
   const validColorIds = ROUTE_COLORS.map((c) => c.id);
-  const routes = p.routes.map((r: Route) => ({
-    ...r,
-    name: r.name ?? '',
-    color: validColorIds.includes(r.color) ? r.color : ROUTE_COLORS[0].id,
-  }));
+  const routes: Route[] = [];
+  for (const r of p.routes as unknown as Record<string, unknown>[]) {
+    if (!r.id || typeof r.id !== 'string') continue;
+    if (!Array.isArray(r.pts) || r.pts.length < 2) continue;
+    const validPts = (r.pts as unknown[]).every(
+      (pt) => Array.isArray(pt) && pt.length === 2 && typeof pt[0] === 'number' && typeof pt[1] === 'number'
+        && isFinite(pt[0] as number) && isFinite(pt[1] as number),
+    );
+    if (!validPts) continue;
+    routes.push({
+      ...(r as unknown as Route),
+      name: (r.name as string) ?? '',
+      color: validColorIds.includes(r.color as string) ? (r.color as string) : ROUTE_COLORS[0].id,
+    });
+  }
   return { ...p, version: 2, routes };
 }
 
@@ -234,7 +244,7 @@ export const useProjectStore = create<ProjectState>()(
           }));
         }
       }
-    });
+    }).catch(() => { /* naming is best-effort */ });
   },
 
   cancelDrawing: () => set({ currentDrawing: [], mode: 'select' }),
@@ -389,7 +399,7 @@ export const useProjectStore = create<ProjectState>()(
             }));
           }
         }
-      });
+      }).catch(() => { /* naming is best-effort */ });
     }
   },
 

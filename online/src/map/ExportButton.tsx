@@ -116,6 +116,8 @@ export function saveProject() {
   URL.revokeObjectURL(url);
 }
 
+const MAX_PROJECT_SIZE = 20 * 1024 * 1024; // 20MB
+
 export function loadProject() {
   const input = document.createElement('input');
   input.type = 'file';
@@ -123,6 +125,10 @@ export function loadProject() {
   input.onchange = async () => {
     const file = input.files?.[0];
     if (!file) return;
+    if (file.size > MAX_PROJECT_SIZE) {
+      alert(t('import.tooLarge'));
+      return;
+    }
     const text = await file.text();
     try {
       useProjectStore.getState().importJSON(text);

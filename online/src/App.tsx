@@ -18,12 +18,12 @@ const MAX_BG_SIZE = 10 * 1024 * 1024; // 10MB (background can be larger than spo
 
 function loadImageFile(file: File) {
   if (file.size > MAX_BG_SIZE) {
-    alert(`底圖檔案太大（${Math.round(file.size / 1024 / 1024)}MB），上限 ${MAX_BG_SIZE / 1024 / 1024}MB`);
+    alert(t('bg.tooLarge'));
     return;
   }
   const state = useProjectStore.getState();
   const hasData = state.project.spots.length > 0 || state.project.routes.length > 0;
-  if (hasData && !confirm('切換底圖會清除現有景點和路線，確定嗎？')) return;
+  if (hasData && !confirm(t('bg.switchConfirm'))) return;
 
   const reader = new FileReader();
   reader.onload = () => {
@@ -53,9 +53,11 @@ export default function App() {
     decodeShareLink(window.location.hash).then((project) => {
       if (project) {
         useProjectStore.getState().importJSON(JSON.stringify(project));
-        // Clean hash after loading
-        history.replaceState(null, '', window.location.pathname + window.location.search);
       }
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }).catch(() => {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      alert(t('import.failed'));
     });
   }, []);
 

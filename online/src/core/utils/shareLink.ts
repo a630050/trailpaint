@@ -21,7 +21,7 @@ export async function encodeShareLink(project: Project): Promise<string> {
     return `${window.location.origin}${window.location.pathname}#share=${base64}`;
   } catch {
     // Fallback: plain base64 (older browsers without CompressionStream)
-    const base64 = btoa(unescape(encodeURIComponent(json)));
+    const base64 = uint8ToBase64(new TextEncoder().encode(json));
     return `${window.location.origin}${window.location.pathname}#share=raw.${base64}`;
   }
 }
@@ -50,7 +50,7 @@ export async function decodeShareLink(hash: string): Promise<Project | null> {
   // Check for raw (uncompressed) fallback
   if (payload.startsWith('raw.')) {
     try {
-      const json = decodeURIComponent(escape(atob(payload.slice(4))));
+      const json = new TextDecoder().decode(base64ToUint8(payload.slice(4)));
       if (json.length > MAX_DECOMPRESSED_LEN) return null;
       const project = JSON.parse(json) as Project;
       return validateProjectLimits(project) ? project : null;

@@ -83,10 +83,16 @@ export default {
   'export.filter.vintage': '復古',
   'export.filter.comic': '漫畫',
 
+  // Import
+  'import.tooLarge': '檔案太大（上限 20MB）',
+
   // Background
   'bg.upload': '上傳底圖',
   'bg.backToMap': '回到地圖',
   'bg.dropHint': '拖曳圖片到此處',
+  'bg.tooLarge': '底圖檔案太大（上限 10MB）',
+  'bg.switchConfirm': '切換底圖會清除現有景點和路線，確定嗎？',
+  'bg.clearConfirm': '回到地圖模式會清除現有景點和路線，確定嗎？',
 
   // Locate
   'locate.title': '定位',

@@ -83,10 +83,16 @@ export default {
   'export.filter.vintage': 'ヴィンテージ',
   'export.filter.comic': 'コミック',
 
+  // Import
+  'import.tooLarge': 'ファイルが大きすぎます（上限 20MB）',
+
   // Background
   'bg.upload': '背景画像をアップロード',
   'bg.backToMap': '地図に戻る',
   'bg.dropHint': '画像をここにドロップ',
+  'bg.tooLarge': '背景画像が大きすぎます（上限 10MB）',
+  'bg.switchConfirm': '背景を切り替えると既存のスポットとルートがクリアされます。続行しますか？',
+  'bg.clearConfirm': '地図モードに戻ると既存のスポットとルートがクリアされます。続行しますか？',
 
   // Locate
   'locate.title': '現在地',
