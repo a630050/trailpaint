@@ -124,9 +124,17 @@ npm run dev        # 開發伺服器
 npm run build      # 打包到 ../app/
 ```
 
+## 分享你的路線地圖
+
+用 TrailPaint 做了一張自己滿意的路線地圖？我們很想看！
+
+把你的 `.trailpaint.json` 專案檔透過 [Issue](https://github.com/notoriouslab/trailpaint/issues) 分享給我們，附上一張匯出的成品圖和簡短描述（這是哪條路線？有什麼故事？）。我們會挑選優秀的作品展示在這裡，讓更多人看到你的創作。
+
+不管是家門口的散步路線、週末的郊山健行、還是一生一次的長程縱走，每一張手繪風地圖都值得被看見。
+
 ## 貢獻
 
-歡迎 PR 和 Issue！
+歡迎 PR 和 Issue！不管是回報 bug、建議功能、還是分享你做的路線地圖，都非常歡迎。
 
 ## 授權
 
