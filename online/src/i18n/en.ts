@@ -16,7 +16,7 @@ export default {
   'mode.drawRoute': 'Draw Route',
 
   // SpotList
-  'spot.empty': 'Choose "Add Spot" mode and click the map',
+  'spot.empty': '📍 Tap "Add Spot" to mark the map\n🖊️ Tap "Draw Route" to trace a path\n📷 Drag an image to change the basemap',
   'spot.defaultTitle': 'Spot',
 
   // SpotEditor
@@ -51,6 +51,11 @@ export default {
   'export.failed': 'PNG export failed. Possible CORS restriction on tiles.',
   'export.3xWarn': '3x export requires more memory and may fail on large maps. Continue?',
   'import.failed': 'Load failed: invalid file format',
+
+  // Background
+  'bg.upload': 'Upload image',
+  'bg.backToMap': 'Back to map',
+  'bg.dropHint': 'Drop image here',
 
   // Basemap
   'basemap.switch': 'Switch basemap',

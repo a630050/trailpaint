@@ -11,7 +11,13 @@ interface SpotListProps {
 
 export default function SpotList({ spots, selectedSpotId, onSelect, onSwap }: SpotListProps) {
   if (spots.length === 0) {
-    return <div className="spot-list__empty">{t('spot.empty')}</div>;
+    return (
+      <div className="spot-list__empty">
+        {t('spot.empty').split('\n').map((line, i) => (
+          <div key={i}>{line}</div>
+        ))}
+      </div>
+    );
   }
 
   return (

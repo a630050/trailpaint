@@ -16,9 +16,10 @@ interface SidebarProps {
   onSave: () => void;
   onLoad: () => void;
   onImportGpx: () => void;
+  onUploadBg: () => void;
 }
 
-export default function Sidebar({ onFlyTo, onExport, onSave, onLoad, onImportGpx }: SidebarProps) {
+export default function Sidebar({ onFlyTo, onExport, onSave, onLoad, onImportGpx, onUploadBg }: SidebarProps) {
   const spots = useProjectStore((s) => s.project.spots);
   const routes = useProjectStore((s) => s.project.routes);
   const selectedSpotId = useProjectStore((s) => s.selectedSpotId);
@@ -30,11 +31,14 @@ export default function Sidebar({ onFlyTo, onExport, onSave, onLoad, onImportGpx
   const updateSpot = useProjectStore((s) => s.updateSpot);
   const removeSpot = useProjectStore((s) => s.removeSpot);
   const swapSpots = useProjectStore((s) => s.swapSpots);
+  const baseMode = useProjectStore((s) => s.baseMode);
+  const clearBackgroundImage = useProjectStore((s) => s.clearBackgroundImage);
 
   const projectName = useProjectStore((s) => s.project.name);
   const setProjectName = useProjectStore((s) => s.setProjectName);
   const [showSettings, setShowSettings] = useState(false);
 
+  const isImageMode = baseMode === 'image';
   const selectedSpot = spots.find((s) => s.id === selectedSpotId) ?? null;
   const selectedRoute = routes.find((r) => r.id === selectedRouteId) ?? null;
 
@@ -75,18 +79,28 @@ export default function Sidebar({ onFlyTo, onExport, onSave, onLoad, onImportGpx
           />
         </div>
 
-        {/* Toolbar row 1: actions */}
+        {/* Toolbar row 1 */}
         <div className="sidebar__toolbar">
           <button className="sidebar__tool-btn" onClick={() => onExport(2)}>{t('app.export')}</button>
           <button className="sidebar__tool-btn" onClick={onSave}>{t('app.save')}</button>
           <button className="sidebar__tool-btn" onClick={onLoad}>{t('app.load')}</button>
-          <button className="sidebar__tool-btn" onClick={onImportGpx}>{t('gpx.import')}</button>
+          {!isImageMode && (
+            <button className="sidebar__tool-btn" onClick={onImportGpx}>{t('gpx.import')}</button>
+          )}
         </div>
 
-        {/* Toolbar row 2: undo/redo + settings */}
+        {/* Toolbar row 2 */}
         <div className="sidebar__toolbar sidebar__toolbar--secondary">
           <button className="sidebar__tool-btn" onClick={handleUndo} title={t('undo')}>↩</button>
           <button className="sidebar__tool-btn" onClick={handleRedo} title={t('redo')}>↪</button>
+          <button className="sidebar__tool-btn" onClick={onUploadBg} title={t('bg.upload')}>
+            {isImageMode ? '🗺️' : '📷'}
+          </button>
+          {isImageMode && (
+            <button className="sidebar__tool-btn" onClick={clearBackgroundImage} title={t('bg.backToMap')}>
+              ↩ {t('bg.backToMap')}
+            </button>
+          )}
           <span style={{ flex: 1 }} />
           <button
             className={`sidebar__tool-btn${showSettings ? ' sidebar__tool-btn--active' : ''}`}
@@ -94,16 +108,14 @@ export default function Sidebar({ onFlyTo, onExport, onSave, onLoad, onImportGpx
           >⚙️</button>
         </div>
 
-        {/* Settings panel (collapsible) */}
         {showSettings && <SettingsPanel />}
 
-        {/* Search */}
-        <SearchBox onSelect={handleSearchSelect} />
+        {/* Search — map mode only */}
+        {!isImageMode && <SearchBox onSelect={handleSearchSelect} />}
 
-        {/* Mode toolbar — always visible */}
         <ModeToolbar />
 
-        {/* Content area */}
+        {/* Content */}
         {selectedSpot ? (
           <SpotEditor
             spot={selectedSpot}

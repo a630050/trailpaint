@@ -1,25 +1,67 @@
+import { useCallback } from 'react';
 import MapView from './map/MapView';
+import ImageMapView from './map/ImageMapView';
 import Sidebar from './core/components/Sidebar';
 import { exportPng, saveProject, loadProject, importGpxFile } from './map/ExportButton';
 import { flyTo } from './map/useMapRef';
 import { useUndoRedoKeys } from './core/hooks/useUndoRedo';
+import { useProjectStore } from './core/store/useProjectStore';
 import './core/components/Sidebar.css';
 import './App.css';
 
+function loadImageFile(file: File) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      useProjectStore.getState().setBackgroundImage(
+        reader.result as string,
+        img.width,
+        img.height,
+      );
+    };
+    img.src = reader.result as string;
+  };
+  reader.readAsDataURL(file);
+}
+
 export default function App() {
   useUndoRedoKeys();
+  const baseMode = useProjectStore((s) => s.baseMode);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      loadImageFile(file);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+  }, []);
 
   return (
-    <div className="app">
+    <div className="app" onDrop={handleDrop} onDragOver={handleDragOver}>
       <Sidebar
         onFlyTo={flyTo}
         onExport={exportPng}
         onSave={saveProject}
         onLoad={loadProject}
         onImportGpx={importGpxFile}
+        onUploadBg={() => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = 'image/*';
+          input.onchange = () => {
+            const file = input.files?.[0];
+            if (file) loadImageFile(file);
+          };
+          input.click();
+        }}
       />
       <div className="map-container">
-        <MapView />
+        {baseMode === 'map' ? <MapView /> : <ImageMapView />}
       </div>
     </div>
   );

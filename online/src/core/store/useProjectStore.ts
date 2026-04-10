@@ -11,6 +11,8 @@ export interface GpxData {
   waypoints: { latlng: [number, number]; name: string }[];
 }
 
+export type BaseMode = 'map' | 'image';
+
 interface ProjectState {
   project: Project;
   selectedSpotId: string | null;
@@ -19,6 +21,9 @@ interface ProjectState {
   mode: Mode;
   currentDrawing: [number, number][];
   pendingFlyTo: { center: [number, number]; zoom: number } | null;
+  baseMode: BaseMode;
+  bgImage: string | null;       // data URL of uploaded background image
+  bgImageSize: { w: number; h: number } | null;
 
   // Spot actions
   addSpot: (latlng: [number, number]) => void;
@@ -47,6 +52,10 @@ interface ProjectState {
   setMapView: (center: [number, number], zoom: number) => void;
   setProjectName: (name: string) => void;
   clearPendingFlyTo: () => void;
+
+  // Background image
+  setBackgroundImage: (dataUrl: string, width: number, height: number) => void;
+  clearBackgroundImage: () => void;
 
   // Settings
   handDrawn: boolean;
@@ -93,6 +102,9 @@ export const useProjectStore = create<ProjectState>()(
   mode: 'select' as Mode,
   currentDrawing: [] as [number, number][],
   pendingFlyTo: null as { center: [number, number]; zoom: number } | null,
+  baseMode: 'map' as BaseMode,
+  bgImage: null as string | null,
+  bgImageSize: null as { w: number; h: number } | null,
   handDrawn: true,
   watermark: true,
 
@@ -299,6 +311,24 @@ export const useProjectStore = create<ProjectState>()(
     set((s) => ({ project: { ...s.project, name } })),
 
   clearPendingFlyTo: () => set({ pendingFlyTo: null }),
+
+  // ── Background image ──
+
+  setBackgroundImage: (dataUrl, width, height) =>
+    set({
+      baseMode: 'image',
+      bgImage: dataUrl,
+      bgImageSize: { w: width, h: height },
+      selectedSpotId: null,
+      selectedRouteId: null,
+    }),
+
+  clearBackgroundImage: () =>
+    set({
+      baseMode: 'map',
+      bgImage: null,
+      bgImageSize: null,
+    }),
 
   // ── Settings ──
 

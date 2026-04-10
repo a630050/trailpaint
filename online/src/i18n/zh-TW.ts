@@ -16,7 +16,7 @@ export default {
   'mode.drawRoute': '畫路線',
 
   // SpotList
-  'spot.empty': '選擇「加景點」模式，點擊地圖新增',
+  'spot.empty': '📍 點「加景點」在地圖上標記\n🖊️ 點「畫路線」繪製路線\n📷 拖曳圖片到畫面換底圖',
   'spot.defaultTitle': '景點',
 
   // SpotEditor
@@ -51,6 +51,11 @@ export default {
   'export.failed': 'PNG 匯出失敗，可能是圖磚 CORS 限制。',
   'export.3xWarn': '3x 匯出需要較多記憶體，大地圖可能會失敗。繼續？',
   'import.failed': '載入失敗：檔案格式不正確',
+
+  // Background
+  'bg.upload': '上傳底圖',
+  'bg.backToMap': '回到地圖',
+  'bg.dropHint': '拖曳圖片到此處',
 
   // Basemap
   'basemap.switch': '切換底圖',

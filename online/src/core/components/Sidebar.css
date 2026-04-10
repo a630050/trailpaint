@@ -457,9 +457,10 @@
 
 .spot-list__empty {
   padding: 24px 16px;
-  text-align: center;
+  text-align: left;
   color: #a08060;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 2;
 }
 
 .spot-list__item {
