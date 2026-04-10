@@ -18,6 +18,7 @@ export default {
   // SpotList
   'spot.empty': '📍「スポット追加」で地図にマーク\n🖊️「ルート描画」でルートを描く\n📷 画像をドラッグして背景を変更',
   'spot.defaultTitle': 'スポット',
+  'spot.loadSample': 'サンプルを読込：陽明山七星山コース',
 
   // SpotEditor
   'editor.name': '名前',

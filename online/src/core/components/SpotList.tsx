@@ -1,5 +1,7 @@
 import type { Spot } from '../models/types';
 import { getIcon } from '../icons';
+import { useProjectStore } from '../store/useProjectStore';
+import { getSampleProjectJSON } from '../utils/sampleProject';
 import { t } from '../../i18n';
 
 interface SpotListProps {
@@ -10,12 +12,20 @@ interface SpotListProps {
 }
 
 export default function SpotList({ spots, selectedSpotId, onSelect, onSwap }: SpotListProps) {
+  const importJSON = useProjectStore((s) => s.importJSON);
+
   if (spots.length === 0) {
     return (
       <div className="spot-list__empty">
         {t('spot.empty').split('\n').map((line, i) => (
           <div key={i}>{line}</div>
         ))}
+        <button
+          className="spot-list__sample-btn"
+          onClick={() => importJSON(getSampleProjectJSON())}
+        >
+          🌿 {t('spot.loadSample')}
+        </button>
       </div>
     );
   }

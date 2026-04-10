@@ -18,6 +18,7 @@ export default {
   // SpotList
   'spot.empty': '📍 Tap "Add Spot" to mark the map\n🖊️ Tap "Draw Route" to trace a path\n📷 Drag an image to change the basemap',
   'spot.defaultTitle': 'Spot',
+  'spot.loadSample': 'Load sample: Yangmingshan Qixing Trail',
 
   // SpotEditor
   'editor.name': 'Name',

@@ -18,6 +18,7 @@ export default {
   // SpotList
   'spot.empty': '📍 點「加景點」在地圖上標記\n🖊️ 點「畫路線」繪製路線\n📷 拖曳圖片到畫面換底圖',
   'spot.defaultTitle': '景點',
+  'spot.loadSample': '載入範例：陽明山七星山步道',
 
   // SpotEditor
   'editor.name': '名稱',
