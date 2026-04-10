@@ -8,6 +8,35 @@ function sanitizeFilename(name: string): string {
 }
 
 /**
+ * Inline tile <img> src as base64 data URLs so html-to-image's SVG foreignObject
+ * can render them on iOS Safari/WebKit (which blocks cross-origin images in foreignObject
+ * even when crossOrigin is set). Returns a restore function to put original URLs back.
+ */
+function inlineTileImages(container: HTMLElement): () => void {
+  const originals: [HTMLImageElement, string][] = [];
+  const tiles = container.querySelectorAll<HTMLImageElement>('.leaflet-tile-pane img');
+
+  for (const tile of tiles) {
+    if (!tile.complete || !tile.naturalWidth) continue;
+    originals.push([tile, tile.src]);
+    try {
+      const c = document.createElement('canvas');
+      c.width = tile.naturalWidth;
+      c.height = tile.naturalHeight;
+      const ctx = c.getContext('2d')!;
+      ctx.drawImage(tile, 0, 0);
+      tile.src = c.toDataURL();
+    } catch {
+      // Canvas tainted — skip, tile will be missing (same as before)
+    }
+  }
+
+  return () => {
+    for (const [tile, src] of originals) tile.src = src;
+  };
+}
+
+/**
  * Capture the map as an HTMLImageElement at the given pixelRatio.
  * Used by App.tsx → ExportPreview for base image + re-capture.
  */
@@ -15,24 +44,31 @@ export async function captureMap(pixelRatio = 2): Promise<HTMLImageElement> {
   const mapEl = document.querySelector('.leaflet-container') as HTMLElement;
   if (!mapEl) throw new Error('Map element not found');
 
-  const dataUrl = await toPng(mapEl, {
-    cacheBust: true,
-    pixelRatio,
-    filter: (node) => {
-      const el = node as HTMLElement;
-      if (el.classList?.contains('leaflet-control-container')) return false;
-      if (el.classList?.contains('watermark')) return false;
-      return true;
-    },
-  });
+  // Inline tiles as base64 for iOS Safari compatibility
+  const restoreTiles = inlineTileImages(mapEl);
 
-  const img = new Image();
-  img.src = dataUrl;
-  await new Promise<void>((resolve, reject) => {
-    img.onload = () => resolve();
-    img.onerror = () => reject(new Error('Image load failed'));
-  });
-  return img;
+  try {
+    const dataUrl = await toPng(mapEl, {
+      cacheBust: true,
+      pixelRatio,
+      filter: (node) => {
+        const el = node as HTMLElement;
+        if (el.classList?.contains('leaflet-control-container')) return false;
+        if (el.classList?.contains('watermark')) return false;
+        return true;
+      },
+    });
+
+    const img = new Image();
+    img.src = dataUrl;
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Image load failed'));
+    });
+    return img;
+  } finally {
+    restoreTiles();
+  }
 }
 
 export function saveProject() {
