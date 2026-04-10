@@ -15,7 +15,7 @@ const MAX_BG_SIZE = 10 * 1024 * 1024; // 10MB (background can be larger than spo
 
 function loadImageFile(file: File) {
   if (file.size > MAX_BG_SIZE) {
-    alert(`底圖檔案太大（${Math.round(file.size / 1024 / 1024)}MB），上限 30MB`);
+    alert(`底圖檔案太大（${Math.round(file.size / 1024 / 1024)}MB），上限 ${MAX_BG_SIZE / 1024 / 1024}MB`);
     return;
   }
   const state = useProjectStore.getState();

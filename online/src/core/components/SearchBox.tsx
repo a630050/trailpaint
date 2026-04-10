@@ -84,7 +84,7 @@ export default function SearchBox({ onSelect }: SearchBoxProps) {
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&addressdetails=0`,
       { headers: { 'Accept-Language': 'zh-TW,en', 'User-Agent': 'TrailPaint/1.0' }, signal: controller.signal }
     )
-      .then((r) => r.json())
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then((data: unknown) => {
         setResults(Array.isArray(data) ? data as SearchResult[] : []);
         setLoading(false);
