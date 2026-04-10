@@ -54,6 +54,10 @@ export default {
   'export.failed': 'PNG 匯出失敗，可能是圖磚 CORS 限制。',
   'export.3xWarn': '3x 匯出需要較多記憶體，大地圖可能會失敗。繼續？',
   'import.failed': '載入失敗：檔案格式不正確',
+  'export.borderStyle': '邊框風格',
+  'export.border.classic': '經典雙框',
+  'export.border.paper': '紙感手繪',
+  'export.border.minimal': '極簡細框',
 
   // Background
   'bg.upload': '上傳底圖',
@@ -75,6 +79,21 @@ export default {
   'settings.title': '設定',
   'settings.handDrawn': '手繪搖晃效果',
   'settings.watermark': '浮水印',
+
+  // Onboarding
+  'onboarding.step1.title': '搜尋或拖曳底圖開始',
+  'onboarding.step1.desc': '用地名搜尋定位，或拖曳圖片到畫面換成自訂底圖。',
+  'onboarding.step1.hint': '🔍 搜尋地點 · 📷 拖圖換底圖',
+  'onboarding.step2.title': '加景點、畫路線',
+  'onboarding.step2.desc': '點「加景點」在地圖上標記地點，點「畫路線」繪製手繪風路徑。',
+  'onboarding.step2.hint': '📍 加景點 · 🖊️ 畫路線',
+  'onboarding.step3.title': '匯出分享',
+  'onboarding.step3.desc': '把你的路線地圖匯出成精美插畫，支援多種比例，適合社群分享。',
+  'onboarding.step3.hint': '📷 匯出漂亮插畫地圖 · 多種比例',
+  'onboarding.loadSample': '🏔️ 載入陽明山範例步道',
+  'onboarding.next': '下一步',
+  'onboarding.start': '開始使用',
+  'onboarding.skip': '跳過引導',
 
   // Icons
   'icon.leaf': '植物',

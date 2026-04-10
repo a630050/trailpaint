@@ -157,3 +157,15 @@
   pointer-events: none;
   z-index: -1;
 }
+
+/* ── Connector line: hand-drawn dashed style ──
+   SVG presentation attributes have specificity 0,0,0, so CSS class rules
+   override them. The selector targets the <line> inside .spot-connector. */
+.spot-connector line {
+  stroke: #b85a00;
+  stroke-width: 1.6;
+  /* 短破折 + 圓端 → 更像手繪點線 */
+  stroke-dasharray: 4 5;
+  stroke-linecap: round;
+  opacity: 0.68;
+}

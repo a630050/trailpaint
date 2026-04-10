@@ -3,6 +3,7 @@ import MapView from './map/MapView';
 import ImageMapView from './map/ImageMapView';
 import Sidebar from './core/components/Sidebar';
 import ModeToolbar from './core/components/ModeToolbar';
+import OnboardingOverlay from './core/components/OnboardingOverlay';
 import { exportPng, saveProject, loadProject, importGpxFile } from './map/ExportButton';
 import { flyTo } from './map/useMapRef';
 import { useUndoRedoKeys } from './core/hooks/useUndoRedo';
@@ -83,6 +84,7 @@ export default function App() {
           </div>
         )}
       </div>
+      <OnboardingOverlay />
     </div>
   );
 }

@@ -54,6 +54,10 @@ export default {
   'export.failed': 'PNG export failed. Possible CORS restriction on tiles.',
   'export.3xWarn': '3x export requires more memory and may fail on large maps. Continue?',
   'import.failed': 'Load failed: invalid file format',
+  'export.borderStyle': 'Border style',
+  'export.border.classic': 'Classic double',
+  'export.border.paper': 'Paper hand-drawn',
+  'export.border.minimal': 'Minimal thin',
 
   // Background
   'bg.upload': 'Upload image',
@@ -75,6 +79,21 @@ export default {
   'settings.title': 'Settings',
   'settings.handDrawn': 'Hand-drawn wobble',
   'settings.watermark': 'Watermark',
+
+  // Onboarding
+  'onboarding.step1.title': 'Search or drop an image to start',
+  'onboarding.step1.desc': 'Search for a place to fly there, or drag an image onto the map to use it as a custom basemap.',
+  'onboarding.step1.hint': '🔍 Search places · 📷 Drop image to change basemap',
+  'onboarding.step2.title': 'Add spots & draw routes',
+  'onboarding.step2.desc': 'Tap "Add Spot" to pin locations, then tap "Draw Route" to sketch hand-drawn paths between them.',
+  'onboarding.step2.hint': '📍 Add Spot · 🖊️ Draw Route',
+  'onboarding.step3.title': 'Export & share',
+  'onboarding.step3.desc': 'Export your map as a beautiful illustrated image, with multiple aspect ratios ready for social sharing.',
+  'onboarding.step3.hint': '📷 Export illustrated map · Multiple aspect ratios',
+  'onboarding.loadSample': '🏔️ Load Yangmingshan sample trail',
+  'onboarding.next': 'Next',
+  'onboarding.start': 'Get Started',
+  'onboarding.skip': 'Skip',
 
   // Icons
   'icon.leaf': 'Plant',

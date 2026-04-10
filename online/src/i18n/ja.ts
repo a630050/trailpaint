@@ -54,6 +54,10 @@ export default {
   'export.failed': 'PNG書き出しに失敗しました。タイルのCORS制限の可能性があります。',
   'export.3xWarn': '3x書き出しはメモリを多く使用し、大きな地図では失敗する可能性があります。続行しますか？',
   'import.failed': '読み込みに失敗しました：ファイル形式が正しくありません',
+  'export.borderStyle': '枠スタイル',
+  'export.border.classic': 'クラシック二重枠',
+  'export.border.paper': '紙感手描き',
+  'export.border.minimal': 'ミニマル細枠',
 
   // Background
   'bg.upload': '背景画像をアップロード',
@@ -75,6 +79,21 @@ export default {
   'settings.title': '設定',
   'settings.handDrawn': '手描き風エフェクト',
   'settings.watermark': 'ウォーターマーク',
+
+  // Onboarding
+  'onboarding.step1.title': '検索または画像をドロップして開始',
+  'onboarding.step1.desc': '地名を検索してその場所へ飛ぶか、画像をドラッグして背景マップを変更できます。',
+  'onboarding.step1.hint': '🔍 場所を検索 · 📷 画像をドロップして背景を変更',
+  'onboarding.step2.title': 'スポット追加・ルートを描く',
+  'onboarding.step2.desc': '「スポット追加」で場所にピンを立て、「ルート描画」で手描き風のルートを引きましょう。',
+  'onboarding.step2.hint': '📍 スポット追加 · 🖊️ ルート描画',
+  'onboarding.step3.title': '書き出して共有',
+  'onboarding.step3.desc': 'あなたのルートマップを美しいイラスト画像として書き出せます。SNS向けの複数比率に対応。',
+  'onboarding.step3.hint': '📷 イラストマップを書き出し · 複数アスペクト比対応',
+  'onboarding.loadSample': '🏔️ 陽明山のサンプルルートを読み込む',
+  'onboarding.next': '次へ',
+  'onboarding.start': 'はじめる',
+  'onboarding.skip': 'スキップ',
 
   // Icons
   'icon.leaf': '植物',
