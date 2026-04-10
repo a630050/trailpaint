@@ -123,9 +123,11 @@ function CardOverlay({ spot, selected, map, onSelect, onUpdateOffset }: CardOver
       map.dragging.enable();
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('blur', onUp);
     };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
+    window.addEventListener('blur', onUp);
   }, [map, spot.cardOffset, onUpdateOffset]);
 
   return createPortal(

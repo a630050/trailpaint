@@ -83,10 +83,27 @@ function createEmptyProject(): Project {
   };
 }
 
-// Migrate v1 project to v2
+// Validate and migrate project data
 function migrateProject(data: Record<string, unknown>): Project {
+  // Basic schema validation
+  if (!data || typeof data !== 'object') throw new Error('Invalid project data');
+  if (!Array.isArray(data.spots)) throw new Error('Missing or invalid spots');
+  if (!Array.isArray(data.center) || data.center.length !== 2) throw new Error('Missing or invalid center');
+  if (typeof data.zoom !== 'number' || isNaN(data.zoom)) throw new Error('Missing or invalid zoom');
+  if (typeof data.name !== 'string') data.name = 'Untitled';
+
+  // Validate each spot has minimum required fields
+  for (const s of data.spots as Record<string, unknown>[]) {
+    if (!s.id || !Array.isArray(s.latlng) || s.latlng.length !== 2) {
+      throw new Error('Invalid spot data');
+    }
+    if (typeof s.latlng[0] !== 'number' || typeof s.latlng[1] !== 'number') {
+      throw new Error('Invalid spot coordinates');
+    }
+  }
+
   const p = data as unknown as Project;
-  if (!p.routes) {
+  if (!p.routes || !Array.isArray(p.routes)) {
     return { ...p, version: 2, routes: [] };
   }
   return { ...p, version: 2 };
@@ -315,20 +332,28 @@ export const useProjectStore = create<ProjectState>()(
   // ── Background image ──
 
   setBackgroundImage: (dataUrl, width, height) =>
-    set({
+    set((s) => ({
       baseMode: 'image',
       bgImage: dataUrl,
       bgImageSize: { w: width, h: height },
       selectedSpotId: null,
       selectedRouteId: null,
-    }),
+      currentDrawing: [],
+      mode: 'select' as Mode,
+      // Clear spots/routes from different coordinate system to prevent data corruption
+      project: { ...s.project, spots: [], routes: [] },
+    })),
 
   clearBackgroundImage: () =>
-    set({
+    set((s) => ({
       baseMode: 'map',
       bgImage: null,
       bgImageSize: null,
-    }),
+      currentDrawing: [],
+      mode: 'select' as Mode,
+      // Clear spots/routes from pixel coordinate system
+      project: { ...s.project, spots: [], routes: [] },
+    })),
 
   // ── Settings ──
 

@@ -57,6 +57,7 @@ export default function SearchBox({ onSelect }: SearchBoxProps) {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const search = useCallback((q: string) => {
     if (q.trim().length < 2) {
@@ -64,18 +65,24 @@ export default function SearchBox({ onSelect }: SearchBoxProps) {
       setSearched(false);
       return;
     }
+    // Abort previous request to prevent race condition
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     setSearched(true);
     fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&addressdetails=0`,
-      { headers: { 'Accept-Language': 'zh-TW,en' } }
+      { headers: { 'Accept-Language': 'zh-TW,en' }, signal: controller.signal }
     )
       .then((r) => r.json())
-      .then((data: SearchResult[]) => {
-        setResults(data);
+      .then((data: unknown) => {
+        setResults(Array.isArray(data) ? data as SearchResult[] : []);
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
         setLoading(false);
       });
   }, []);

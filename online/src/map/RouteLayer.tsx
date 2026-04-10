@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Polyline, CircleMarker } from 'react-leaflet';
+import { Polyline, CircleMarker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useProjectStore } from '../core/store/useProjectStore';
 import { getRouteColor } from '../core/models/routes';
@@ -98,6 +98,8 @@ function DraggableNode({
   onDrag: (latlng: [number, number]) => void;
   onDblClick: () => void;
 }) {
+  const map = useMap();
+
   return (
     <CircleMarker
       center={position}
@@ -111,20 +113,22 @@ function DraggableNode({
       eventHandlers={{
         mousedown: (e) => {
           L.DomEvent.stopPropagation(e);
-          const map = e.target._map;
           map.dragging.disable();
 
           const onMove = (ev: MouseEvent) => {
-            const pt = map.containerPointToLatLng(L.point(ev.clientX - map.getContainer().getBoundingClientRect().left, ev.clientY - map.getContainer().getBoundingClientRect().top));
+            const rect = map.getContainer().getBoundingClientRect();
+            const pt = map.containerPointToLatLng(L.point(ev.clientX - rect.left, ev.clientY - rect.top));
             onDrag([pt.lat, pt.lng]);
           };
           const onUp = () => {
             map.dragging.enable();
             window.removeEventListener('mousemove', onMove);
             window.removeEventListener('mouseup', onUp);
+            window.removeEventListener('blur', onUp);
           };
           window.addEventListener('mousemove', onMove);
           window.addEventListener('mouseup', onUp);
+          window.addEventListener('blur', onUp);
         },
         dblclick: (e) => {
           L.DomEvent.stopPropagation(e);

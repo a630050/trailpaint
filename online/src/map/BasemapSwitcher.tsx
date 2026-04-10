@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { t } from '../i18n';
@@ -44,19 +44,32 @@ export default function BasemapSwitcher() {
   const map = useMap();
   const [current, setCurrent] = useState('voyager');
   const [open, setOpen] = useState(false);
-  const [tileLayer, setTileLayer] = useState<L.TileLayer | null>(null);
+  const layerRef = useRef<L.TileLayer | null>(null);
+
+  // Initialize default tile layer on mount
+  useEffect(() => {
+    const defaultBm = BASEMAPS[0];
+    const layer = L.tileLayer(defaultBm.url, {
+      attribution: defaultBm.attribution,
+      maxZoom: defaultBm.maxZoom ?? 19,
+    }).addTo(map);
+    layer.setZIndex(0);
+    layerRef.current = layer;
+    return () => {
+      if (layerRef.current) map.removeLayer(layerRef.current);
+    };
+  }, [map]);
 
   const switchTo = (bm: BasemapDef) => {
-    if (tileLayer) {
-      map.removeLayer(tileLayer);
+    if (layerRef.current) {
+      map.removeLayer(layerRef.current);
     }
     const layer = L.tileLayer(bm.url, {
       attribution: bm.attribution,
       maxZoom: bm.maxZoom ?? 19,
     }).addTo(map);
-    // Move to bottom
     layer.setZIndex(0);
-    setTileLayer(layer);
+    layerRef.current = layer;
     setCurrent(bm.id);
     setOpen(false);
   };

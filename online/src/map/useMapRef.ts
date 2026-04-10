@@ -1,14 +1,17 @@
 import type L from 'leaflet';
 
-// Lightweight ref holder for the Leaflet map instance, shared via context-free callback
 let mapInstance: L.Map | null = null;
 
-export function setMapInstance(map: L.Map) {
+export function setMapInstance(map: L.Map | null) {
   mapInstance = map;
 }
 
 export function flyTo(latlng: [number, number], zoom?: number) {
   if (mapInstance) {
-    mapInstance.flyTo(latlng, zoom ?? mapInstance.getZoom(), { duration: 0.6 });
+    try {
+      mapInstance.flyTo(latlng, zoom ?? mapInstance.getZoom(), { duration: 0.6 });
+    } catch {
+      // Map may have been destroyed during mode switch
+    }
   }
 }

@@ -42,6 +42,7 @@ function ImageMapSync() {
   const map = useMap();
   useEffect(() => {
     setMapInstance(map);
+    return () => { setMapInstance(null); };
   }, [map]);
   return null;
 }

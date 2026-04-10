@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, ZoomControl, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, ZoomControl, useMapEvents, useMap } from 'react-leaflet';
 import { useProjectStore } from '../core/store/useProjectStore';
 import { useEffect } from 'react';
 import SpotMarker from './SpotMarker';
@@ -11,10 +11,6 @@ import { setMapInstance } from './useMapRef';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
 
-const TILE_URL =
-  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-const ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
 
 function MapClickHandler() {
   const mode = useProjectStore((s) => s.mode);
@@ -56,7 +52,10 @@ function MapSync() {
       setMapView([c.lat, c.lng], map.getZoom());
     };
     map.on('moveend', handler);
-    return () => { map.off('moveend', handler); };
+    return () => {
+      map.off('moveend', handler);
+      setMapInstance(null);
+    };
   }, [map, setMapView]);
 
   useEffect(() => {
@@ -91,14 +90,13 @@ export default function MapView() {
       zoomControl={false}
     >
       <ZoomControl position="bottomright" />
-      <TileLayer url={TILE_URL} attribution={ATTRIBUTION} />
+      <BasemapSwitcher />
       <HandDrawnFilter />
       <MapClickHandler />
       <MapSync />
       <RouteLayer />
       <DrawingPreview />
       <SpotMarkers />
-      <BasemapSwitcher />
       <Watermark />
     </MapContainer>
   );
