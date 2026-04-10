@@ -60,35 +60,31 @@ export async function captureMap(pixelRatio = 2): Promise<HTMLImageElement> {
   const ctx = canvas.getContext('2d')!;
   drawTilesToCanvas(ctx, mapEl, containerRect, pixelRatio);
 
-  // Step 2: Hide tiles, capture everything else with html-to-image
-  const tilePane = mapEl.querySelector('.leaflet-tile-pane') as HTMLElement | null;
-  const origDisplay = tilePane?.style.display ?? '';
-  if (tilePane) tilePane.style.display = 'none';
+  // Step 2: Capture overlays (routes, markers, cards) with html-to-image
+  // Use filter to skip tile pane (avoids DOM mutation + keeps photos rendering on iOS)
+  const overlayDataUrl = await toPng(mapEl, {
+    cacheBust: true,
+    pixelRatio,
+    filter: (node) => {
+      const el = node as HTMLElement;
+      if (el.classList?.contains('leaflet-tile-pane')) return false;
+      if (el.classList?.contains('leaflet-control-container')) return false;
+      if (el.classList?.contains('watermark')) return false;
+      if (el.classList?.contains('locate-button')) return false;
+      if (el.classList?.contains('basemap-switcher')) return false;
+      return true;
+    },
+  });
 
-  try {
-    const overlayDataUrl = await toPng(mapEl, {
-      pixelRatio,
-      backgroundColor: 'rgba(0,0,0,0)',
-      filter: (node) => {
-        const el = node as HTMLElement;
-        if (el.classList?.contains('leaflet-control-container')) return false;
-        if (el.classList?.contains('watermark')) return false;
-        return true;
-      },
-    });
+  const overlayImg = new Image();
+  overlayImg.src = overlayDataUrl;
+  await new Promise<void>((resolve, reject) => {
+    overlayImg.onload = () => resolve();
+    overlayImg.onerror = () => reject(new Error('Overlay capture failed'));
+  });
 
-    const overlayImg = new Image();
-    overlayImg.src = overlayDataUrl;
-    await new Promise<void>((resolve, reject) => {
-      overlayImg.onload = () => resolve();
-      overlayImg.onerror = () => reject(new Error('Overlay capture failed'));
-    });
-
-    // Composite: overlays on top of tiles
-    ctx.drawImage(overlayImg, 0, 0);
-  } finally {
-    if (tilePane) tilePane.style.display = origDisplay;
-  }
+  // Composite: overlays on top of tiles
+  ctx.drawImage(overlayImg, 0, 0);
 
   // Convert canvas to image
   const finalImg = new Image();
