@@ -93,12 +93,16 @@ function migrateProject(data: Record<string, unknown>): Project {
   if (typeof data.zoom !== 'number' || isNaN(data.zoom)) throw new Error('Missing or invalid zoom');
   if (typeof data.name !== 'string') data.name = 'Untitled';
 
-  // Validate each spot has minimum required fields
+  // Semantic limits — prevent UI freeze from absurd data
+  if (data.spots.length > 200) throw new Error('Too many spots (max 200)');
+
+  // Validate each spot has minimum required fields + isFinite coordinates
   for (const s of data.spots as Record<string, unknown>[]) {
     if (!s.id || !Array.isArray(s.latlng) || s.latlng.length !== 2) {
       throw new Error('Invalid spot data');
     }
-    if (typeof s.latlng[0] !== 'number' || typeof s.latlng[1] !== 'number') {
+    if (typeof s.latlng[0] !== 'number' || typeof s.latlng[1] !== 'number'
+      || !isFinite(s.latlng[0] as number) || !isFinite(s.latlng[1] as number)) {
       throw new Error('Invalid spot coordinates');
     }
   }
@@ -107,11 +111,12 @@ function migrateProject(data: Record<string, unknown>): Project {
   if (!p.routes || !Array.isArray(p.routes)) {
     return { ...p, version: 2, routes: [] };
   }
+  if (p.routes.length > 50) throw new Error('Too many routes (max 50)');
   const validColorIds = ROUTE_COLORS.map((c) => c.id);
   const routes: Route[] = [];
   for (const r of p.routes as unknown as Record<string, unknown>[]) {
     if (!r.id || typeof r.id !== 'string') continue;
-    if (!Array.isArray(r.pts) || r.pts.length < 2) continue;
+    if (!Array.isArray(r.pts) || r.pts.length < 2 || r.pts.length > 5000) continue;
     const validPts = (r.pts as unknown[]).every(
       (pt) => Array.isArray(pt) && pt.length === 2 && typeof pt[0] === 'number' && typeof pt[1] === 'number'
         && isFinite(pt[0] as number) && isFinite(pt[1] as number),

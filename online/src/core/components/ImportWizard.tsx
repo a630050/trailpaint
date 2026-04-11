@@ -119,6 +119,10 @@ export default function ImportWizard({ onClose, onLoadImage }: ImportWizardProps
     input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
+      if (file.size > MAX_PROJECT_SIZE) {
+        alert(t('import.tooLarge'));
+        return;
+      }
       try {
         const text = await file.text();
         const data = parseGpx(text);
