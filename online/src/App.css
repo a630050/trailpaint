@@ -11,6 +11,7 @@
   flex: 1;
   height: 100%;
   position: relative;
+  isolation: isolate; /* Prevent Leaflet z-indexes from covering sidebar toggle */
 }
 
 /* Drag-over visual feedback */

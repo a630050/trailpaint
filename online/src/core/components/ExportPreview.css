@@ -214,17 +214,27 @@
 /* ── Mobile: stack vertically ── */
 
 @media (max-width: 768px) {
+  .export-preview__backdrop {
+    padding: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
   .export-preview {
-    max-height: 95vh;
+    max-height: 85vh;
+    max-height: 85dvh;
+    border-radius: 10px;
   }
 
   .export-preview__body {
     flex-direction: column;
+    overflow-y: auto;
   }
 
   .export-preview__canvas-wrap {
-    max-height: 35vh;
-    min-height: 160px;
+    max-height: 30vh;
+    max-height: 30dvh;
+    min-height: 120px;
+    flex-shrink: 0;
   }
 
   .export-preview__controls {

@@ -22,6 +22,25 @@ const BORDERS: ExportBorderStyle[] = ['classic', 'paper', 'minimal'];
 const FILTERS: StyleFilter[] = ['original', 'watercolor', 'sketch', 'vintage', 'comic'];
 const RESOLUTIONS = [1, 2, 3] as const;
 
+/** Copy text to clipboard with iOS Safari fallback */
+function copyToClipboard(text: string): boolean {
+  // Try modern API first
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).catch(() => {});
+    return true;
+  }
+  // Fallback: hidden textarea + execCommand (works on iOS without async)
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;left:-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, text.length);
+  const ok = document.execCommand('copy');
+  document.body.removeChild(ta);
+  return ok;
+}
+
 // Type-safe i18n label lookups (no unsafe casts)
 const FORMAT_LABEL: Record<ExportFormat, () => string> = {
   'full': () => t('export.format.full'),
@@ -137,9 +156,10 @@ export default function ExportPreview({ baseImage, onClose, onRecapture }: Expor
       const finalUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       const date = new Date().toISOString().slice(0, 10);
-      const suffix = format === 'full' ? '' : `-${format.replace(':', 'x')}`;
+      const fmtSuffix = format === 'full' ? '' : `-${format.replace(':', 'x')}`;
+      const dpiSuffix = `-${pixelRatio}x`;
       const filterSuffix = filter === 'original' ? '' : `-${filter}`;
-      link.download = `trailpaint-${sanitizeFilename(projectName)}-${date}${suffix}${filterSuffix}.png`;
+      link.download = `trailpaint-${sanitizeFilename(projectName)}-${date}${fmtSuffix}${dpiSuffix}${filterSuffix}.png`;
       link.href = finalUrl;
       link.click();
     } catch (err) {
@@ -153,20 +173,19 @@ export default function ExportPreview({ baseImage, onClose, onRecapture }: Expor
   const handleCopyShareLink = useCallback(async () => {
     try {
       const url = await encodeShareLink(project);
-      await navigator.clipboard.writeText(url);
+      copyToClipboard(url);
       showToast(t('export.preview.shareCopied'));
     } catch (err) {
       console.error('Share link failed:', err);
     }
   }, [project, showToast]);
 
-  const handleCopyAiPrompt = useCallback(async () => {
+  const handleCopyAiPrompt = useCallback(() => {
     const routeName = routes[0]?.name?.trim() ?? projectName;
     const text = getAiPrompt(routeName, filter);
-    try {
-      await navigator.clipboard.writeText(text);
+    if (copyToClipboard(text)) {
       showToast(t('export.preview.aiCopied'));
-    } catch {
+    } else {
       window.prompt('Copy this prompt:', text);
     }
   }, [routes, projectName, filter, showToast]);

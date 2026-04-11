@@ -67,6 +67,11 @@ export async function captureMap(pixelRatio = 2): Promise<HTMLImageElement> {
   const origBg = mapEl.style.background;
   mapEl.style.background = 'transparent';
 
+  // Suppress pin/card shadows for cleaner export
+  const shadowStyle = document.createElement('style');
+  shadowStyle.textContent = '.spot-pin__circle, .spot-card { box-shadow: none !important; }';
+  document.head.appendChild(shadowStyle);
+
   try {
     const overlayDataUrl = await toPng(mapEl, {
       cacheBust: true,
@@ -92,6 +97,7 @@ export async function captureMap(pixelRatio = 2): Promise<HTMLImageElement> {
     ctx.drawImage(overlayImg, 0, 0);
   } finally {
     mapEl.style.background = origBg;
+    shadowStyle.remove();
   }
 
   // Convert canvas to image
