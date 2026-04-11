@@ -130,7 +130,13 @@ export default {
   'undo': 'Undo',
   'redo': 'Redo',
 
-  // Settings
+  // Info & Settings
+  'info.guide': 'Quick Start',
+  'info.step1': 'Add Spot: mark locations on the map',
+  'info.step2': 'Draw Route: trace a hand-drawn path',
+  'info.step3': 'Export: create a beautiful illustrated map',
+  'info.about': 'About',
+  'info.tagline': 'Hand-drawn trail map maker',
   'settings.title': 'Settings',
   'settings.handDrawn': 'Hand-drawn wobble',
   'settings.watermark': 'Watermark',

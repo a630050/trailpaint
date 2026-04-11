@@ -130,7 +130,13 @@ export default {
   'undo': '復原',
   'redo': '重做',
 
-  // Settings
+  // Info & Settings
+  'info.guide': '快速上手',
+  'info.step1': '加景點：在地圖上標記地點',
+  'info.step2': '畫路線：繪製手繪風路徑',
+  'info.step3': '匯出：產出漂亮的插畫地圖',
+  'info.about': '關於',
+  'info.tagline': '路小繪 — 手繪風路線地圖工具',
   'settings.title': '設定',
   'settings.handDrawn': '手繪搖晃效果',
   'settings.watermark': '浮水印',

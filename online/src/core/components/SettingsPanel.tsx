@@ -9,6 +9,15 @@ export default function SettingsPanel() {
 
   return (
     <div className="settings-panel">
+      {/* Quick guide */}
+      <div className="settings-panel__title">{t('info.guide')}</div>
+      <div className="settings-panel__guide">
+        <p>📍 {t('info.step1')}</p>
+        <p>🖊️ {t('info.step2')}</p>
+        <p>📷 {t('info.step3')}</p>
+      </div>
+
+      {/* Settings */}
       <div className="settings-panel__title">{t('settings.title')}</div>
       <label className="settings-panel__toggle">
         <input type="checkbox" checked={handDrawn} onChange={toggleHandDrawn} />
@@ -18,6 +27,19 @@ export default function SettingsPanel() {
         <input type="checkbox" checked={watermark} onChange={toggleWatermark} />
         <span>{t('settings.watermark')}</span>
       </label>
+
+      {/* About */}
+      <div className="settings-panel__title">{t('info.about')}</div>
+      <div className="settings-panel__about">
+        <p>🌿 TrailPaint {t('info.tagline')}</p>
+        <p>
+          <a href="https://github.com/notoriouslab/trailpaint" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          {' · '}
+          © {new Date().getFullYear()} notoriouslab
+        </p>
+      </div>
     </div>
   );
 }

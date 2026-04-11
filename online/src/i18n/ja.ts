@@ -130,7 +130,13 @@ export default {
   'undo': '元に戻す',
   'redo': 'やり直す',
 
-  // Settings
+  // Info & Settings
+  'info.guide': 'クイックスタート',
+  'info.step1': 'スポット追加：地図上に場所をマーク',
+  'info.step2': 'ルート描画：手描き風のルートを引く',
+  'info.step3': '書き出し：美しいイラストマップを作成',
+  'info.about': 'について',
+  'info.tagline': '手描き風ルートマップメーカー',
   'settings.title': '設定',
   'settings.handDrawn': '手描き風エフェクト',
   'settings.watermark': 'ウォーターマーク',

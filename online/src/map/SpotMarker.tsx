@@ -18,8 +18,8 @@ function getZoomScale(zoom: number): number {
 }
 
 const MOBILE_MQ = '(max-width: 768px)';
-const CARD_W_DESKTOP = 180;
-const CARD_W_MOBILE = 150;
+const CARD_W_DESKTOP = 150;
+const CARD_W_MOBILE = 120;
 
 export default function SpotMarker({ spot }: { spot: Spot }) {
   const map = useMap();
