@@ -96,25 +96,34 @@ function migrateProject(data: Record<string, unknown>): Project {
   // Semantic limits — prevent UI freeze from absurd data
   if (data.spots.length > 200) throw new Error('Too many spots (max 200)');
 
-  // Validate each spot has minimum required fields + isFinite coordinates
-  for (const s of data.spots as Record<string, unknown>[]) {
-    if (!s.id || !Array.isArray(s.latlng) || s.latlng.length !== 2) {
-      throw new Error('Invalid spot data');
-    }
+  // Validate each spot — skip invalid ones instead of rejecting entire import
+  const spots: Spot[] = [];
+  for (const raw of data.spots as unknown[]) {
+    if (!raw || typeof raw !== 'object') continue;
+    const s = raw as Record<string, unknown>;
+    if (!s.id || typeof s.id !== 'string') continue;
+    if (!Array.isArray(s.latlng) || s.latlng.length !== 2) continue;
     if (typeof s.latlng[0] !== 'number' || typeof s.latlng[1] !== 'number'
-      || !isFinite(s.latlng[0] as number) || !isFinite(s.latlng[1] as number)) {
-      throw new Error('Invalid spot coordinates');
-    }
+      || !isFinite(s.latlng[0] as number) || !isFinite(s.latlng[1] as number)) continue;
+    spots.push({
+      ...(s as unknown as Spot),
+      cardOffset: s.cardOffset && typeof (s.cardOffset as Record<string, unknown>).x === 'number'
+        && typeof (s.cardOffset as Record<string, unknown>).y === 'number'
+        ? (s.cardOffset as Spot['cardOffset'])
+        : { ...DEFAULT_CARD_OFFSET },
+    });
   }
 
-  const p = data as unknown as Project;
+  const p = { ...(data as unknown as Project), spots };
   if (!p.routes || !Array.isArray(p.routes)) {
     return { ...p, version: 2, routes: [] };
   }
   if (p.routes.length > 50) throw new Error('Too many routes (max 50)');
   const validColorIds = ROUTE_COLORS.map((c) => c.id);
   const routes: Route[] = [];
-  for (const r of p.routes as unknown as Record<string, unknown>[]) {
+  for (const raw of p.routes as unknown as unknown[]) {
+    if (!raw || typeof raw !== 'object') continue;
+    const r = raw as Record<string, unknown>;
     if (!r.id || typeof r.id !== 'string') continue;
     if (!Array.isArray(r.pts) || r.pts.length < 2 || r.pts.length > 5000) continue;
     const validPts = (r.pts as unknown[]).every(
@@ -126,6 +135,7 @@ function migrateProject(data: Record<string, unknown>): Project {
       ...(r as unknown as Route),
       name: (r.name as string) ?? '',
       color: validColorIds.includes(r.color as string) ? (r.color as string) : ROUTE_COLORS[0].id,
+      elevations: Array.isArray(r.elevations) ? (r.elevations as number[]) : null,
     });
   }
   return { ...p, version: 2, routes };
