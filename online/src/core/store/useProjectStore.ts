@@ -110,8 +110,13 @@ function migrateProject(data: Record<string, unknown>): Project {
     if (!Array.isArray(s.latlng) || s.latlng.length !== 2) continue;
     if (typeof s.latlng[0] !== 'number' || typeof s.latlng[1] !== 'number'
       || !isFinite(s.latlng[0] as number) || !isFinite(s.latlng[1] as number)) continue;
+    // Only allow null or data:image/ base64 photos (block external URLs / tracking pixels)
+    const rawPhoto = (s as Record<string, unknown>).photo;
+    const safePhoto = typeof rawPhoto === 'string' && rawPhoto.startsWith('data:image/') ? rawPhoto : null;
+
     spots.push({
       ...(s as unknown as Spot),
+      photo: safePhoto,
       num: typeof s.num === 'number' && s.num > 0 ? Math.round(s.num) : spots.length + 1,
       cardOffset: s.cardOffset && typeof (s.cardOffset as Record<string, unknown>).x === 'number'
         && typeof (s.cardOffset as Record<string, unknown>).y === 'number'

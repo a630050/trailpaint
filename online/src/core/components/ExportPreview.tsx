@@ -7,7 +7,7 @@ import {
   type StyleFilter,
 } from '../utils/exportRenderer';
 import { applyStyleFilter } from '../utils/styleFilters';
-import { encodeShareLink } from '../utils/shareLink';
+import { encodeShareLink, shortenUrl } from '../utils/shareLink';
 import { t } from '../../i18n';
 import './ExportPreview.css';
 
@@ -184,6 +184,21 @@ export default function ExportPreview({ baseImage, onClose, onRecapture }: Expor
     }
   }, [project, showToast]);
 
+  const handleShortenLink = useCallback(async () => {
+    try {
+      const url = await encodeShareLink(project);
+      const short = await shortenUrl(url);
+      if (short) {
+        const ok = await copyToClipboard(short);
+        if (ok) showToast(t('export.preview.shortCopied'));
+      } else {
+        showToast(t('export.preview.shortFailed'));
+      }
+    } catch {
+      showToast(t('export.preview.shortFailed'));
+    }
+  }, [project, showToast]);
+
   const handleCopyAiPrompt = useCallback(async () => {
     const routeName = routes[0]?.name?.trim() ?? projectName;
     const text = getAiPrompt(routeName, filter);
@@ -294,12 +309,22 @@ export default function ExportPreview({ baseImage, onClose, onRecapture }: Expor
               >
                 {downloading ? t('export.preview.downloading') : t('export.preview.download')}
               </button>
-              <button
-                className="export-preview__btn"
-                onClick={handleCopyShareLink}
-              >
-                🔗 {t('export.preview.shareLink')}
-              </button>
+              <div className="export-preview__btn-row">
+                <button
+                  className="export-preview__btn"
+                  onClick={handleCopyShareLink}
+                  style={{ flex: 1 }}
+                >
+                  🔗 {t('export.preview.shareLink')}
+                </button>
+                <button
+                  className="export-preview__btn export-preview__btn--small"
+                  onClick={handleShortenLink}
+                  title={t('export.preview.shortenTip')}
+                >
+                  ✂️
+                </button>
+              </div>
               <button
                 className="export-preview__btn"
                 onClick={handleCopyAiPrompt}

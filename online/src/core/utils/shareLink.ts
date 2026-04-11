@@ -60,26 +60,30 @@ function expandProject(c: Record<string, unknown>): Project {
 }
 
 /**
- * Encode a project into a compressed URL hash, then try to shorten via is.gd.
+ * Encode a project into a compressed URL hash (long URL, no third-party).
  */
 export async function encodeShareLink(project: Project): Promise<string> {
   const compact = compactProject(project);
   const json = JSON.stringify(compact);
 
-  let longUrl: string;
   try {
     const blob = new Blob([new TextEncoder().encode(json)]);
     const cs = new CompressionStream('deflate');
     const compressed = blob.stream().pipeThrough(cs);
     const buffer = await new Response(compressed).arrayBuffer();
     const base64 = uint8ToBase64(new Uint8Array(buffer));
-    longUrl = `${window.location.origin}${window.location.pathname}#share=${base64}`;
+    return `${window.location.origin}${window.location.pathname}#share=${base64}`;
   } catch {
     const base64 = uint8ToBase64(new TextEncoder().encode(json));
-    longUrl = `${window.location.origin}${window.location.pathname}#share=raw.${base64}`;
+    return `${window.location.origin}${window.location.pathname}#share=raw.${base64}`;
   }
+}
 
-  // Try to shorten via is.gd (free, no API key)
+/**
+ * Shorten a URL via is.gd. Sends the full URL to a third-party service.
+ * Returns short URL on success, null on failure.
+ */
+export async function shortenUrl(longUrl: string): Promise<string | null> {
   try {
     const res = await fetch(
       `https://is.gd/create.php?format=simple&url=${encodeURIComponent(longUrl)}`,
@@ -90,9 +94,9 @@ export async function encodeShareLink(project: Project): Promise<string> {
       if (shortUrl.startsWith('http')) return shortUrl;
     }
   } catch {
-    // Shortener unavailable — use long URL
+    // Shortener unavailable
   }
-  return longUrl;
+  return null;
 }
 
 /**

@@ -173,6 +173,17 @@
   cursor: default;
 }
 
+.export-preview__btn-row {
+  display: flex;
+  gap: 6px;
+}
+
+.export-preview__btn--small {
+  flex: 0 !important;
+  padding: 10px;
+  min-width: 42px;
+}
+
 .export-preview__btn--primary {
   background: #78350f;
   color: #fef9e7;
