@@ -1,12 +1,6 @@
-import { useProjectStore } from '../store/useProjectStore';
 import { t } from '../../i18n';
 
 export default function SettingsPanel() {
-  const handDrawn = useProjectStore((s) => s.handDrawn);
-  const watermark = useProjectStore((s) => s.watermark);
-  const toggleHandDrawn = useProjectStore((s) => s.toggleHandDrawn);
-  const toggleWatermark = useProjectStore((s) => s.toggleWatermark);
-
   return (
     <div className="settings-panel">
       {/* Quick guide */}
@@ -17,16 +11,15 @@ export default function SettingsPanel() {
         <p>📷 {t('info.step3')}</p>
       </div>
 
-      {/* Settings */}
-      <div className="settings-panel__title">{t('settings.title')}</div>
-      <label className="settings-panel__toggle">
-        <input type="checkbox" checked={handDrawn} onChange={toggleHandDrawn} />
-        <span>{t('settings.handDrawn')}</span>
-      </label>
-      <label className="settings-panel__toggle">
-        <input type="checkbox" checked={watermark} onChange={toggleWatermark} />
-        <span>{t('settings.watermark')}</span>
-      </label>
+      {/* Services */}
+      <div className="settings-panel__title">{t('info.services')}</div>
+      <div className="settings-panel__services">
+        <p><a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a> — {t('info.svc.leaflet')}</p>
+        <p><a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> — {t('info.svc.osm')}</p>
+        <p><a href="https://carto.com" target="_blank" rel="noopener noreferrer">CARTO</a> — {t('info.svc.carto')}</p>
+        <p><a href="https://nominatim.openstreetmap.org" target="_blank" rel="noopener noreferrer">Nominatim</a> — {t('info.svc.nominatim')}</p>
+        <p><a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo</a> — {t('info.svc.openmeteo')}</p>
+      </div>
 
       {/* About */}
       <div className="settings-panel__title">{t('info.about')}</div>

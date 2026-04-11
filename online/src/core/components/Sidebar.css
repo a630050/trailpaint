@@ -523,6 +523,27 @@
   line-height: 1.8;
 }
 
+.settings-panel__services {
+  margin-bottom: 12px;
+}
+
+.settings-panel__services p {
+  margin: 0;
+  font-size: 12px;
+  color: #5c3a10;
+  line-height: 1.8;
+}
+
+.settings-panel__services a {
+  color: #b45309;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.settings-panel__services a:hover {
+  text-decoration: underline;
+}
+
 .settings-panel__about {
   margin-top: 4px;
 }
