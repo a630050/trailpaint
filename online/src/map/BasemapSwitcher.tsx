@@ -110,7 +110,7 @@ export default function BasemapSwitcher() {
         flavor: bm.flavor,
         lang: PROTOMAPS_LANG,
         attribution: '&copy; <a href="https://openstreetmap.org/copyright">OSM</a> Protomaps',
-      });
+      }) as unknown as L.Layer;
     } else {
       layer = L.tileLayer(bm.url, {
         attribution: bm.attribution,
