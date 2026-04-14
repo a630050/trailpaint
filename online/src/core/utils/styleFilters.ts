@@ -15,9 +15,6 @@ export function applyStyleFilter(canvas: HTMLCanvasElement, filter: StyleFilter)
     case 'vintage':
       applyVintage(canvas);
       break;
-    case 'comic':
-      applyComic(canvas);
-      break;
     // 'original' — no-op
   }
 }
@@ -132,107 +129,44 @@ function applyVintage(canvas: HTMLCanvasElement) {
   const w = canvas.width;
   const h = canvas.height;
 
-  // Step 1: Sepia tone via CSS filter (replaces per-pixel matrix)
+  // Step 1: Gentle sepia + slight desaturation + warm brightness
   const temp = document.createElement('canvas');
   temp.width = w;
   temp.height = h;
   const tctx = temp.getContext('2d')!;
-  tctx.filter = 'sepia(100%)';
+  tctx.filter = 'sepia(40%) saturate(85%) brightness(102%)';
   tctx.drawImage(canvas, 0, 0);
   ctx.drawImage(temp, 0, 0);
   temp.width = 1;
   temp.height = 1;
 
-  // Step 2: Subtle paper noise
+  // Step 2: Warm tint overlay (subtle cream wash)
+  ctx.globalAlpha = 0.08;
+  ctx.fillStyle = '#d4a060';
+  ctx.fillRect(0, 0, w, h);
+  ctx.globalAlpha = 1.0;
+
+  // Step 3: Fine paper grain
   const noiseData = ctx.getImageData(0, 0, w, h);
   const nd = noiseData.data;
   for (let i = 0; i < nd.length; i += 4) {
-    const noise = (Math.random() - 0.5) * 12;
+    const noise = (Math.random() - 0.5) * 10;
     nd[i] = clamp(nd[i] + noise);
     nd[i + 1] = clamp(nd[i + 1] + noise);
     nd[i + 2] = clamp(nd[i + 2] + noise);
   }
   ctx.putImageData(noiseData, 0, 0);
 
-  // Step 3: Vignette (radial gradient overlay)
+  // Step 4: Soft vignette (subtle darkening at edges)
   const cx = w / 2;
   const cy = h / 2;
   const radius = Math.sqrt(cx * cx + cy * cy);
-  const vignette = ctx.createRadialGradient(cx, cy, radius * 0.4, cx, cy, radius);
+  const vignette = ctx.createRadialGradient(cx, cy, radius * 0.5, cx, cy, radius);
   vignette.addColorStop(0, 'rgba(0,0,0,0)');
-  vignette.addColorStop(0.7, 'rgba(0,0,0,0.15)');
-  vignette.addColorStop(1, 'rgba(0,0,0,0.45)');
+  vignette.addColorStop(0.75, 'rgba(0,0,0,0.08)');
+  vignette.addColorStop(1, 'rgba(0,0,0,0.25)');
   ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, w, h);
-}
-
-/* ── Comic: 高對比 + 色階量化 + 粗邊線 ── */
-
-function applyComic(canvas: HTMLCanvasElement) {
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-  const w = canvas.width;
-  const h = canvas.height;
-
-  // Step 1: Edge detection (for thick outlines)
-  const original = ctx.getImageData(0, 0, w, h);
-  const src = original.data;
-
-  const gray = new Float32Array(w * h);
-  for (let i = 0; i < gray.length; i++) {
-    const j = i * 4;
-    gray[i] = 0.299 * src[j] + 0.587 * src[j + 1] + 0.114 * src[j + 2];
-  }
-
-  // Sobel for edges
-  const edges = new Float32Array(w * h);
-  for (let y = 1; y < h - 1; y++) {
-    for (let x = 1; x < w - 1; x++) {
-      const idx = y * w + x;
-      const gx =
-        -gray[idx - w - 1] + gray[idx - w + 1] +
-        -2 * gray[idx - 1] + 2 * gray[idx + 1] +
-        -gray[idx + w - 1] + gray[idx + w + 1];
-      const gy =
-        -gray[idx - w - 1] - 2 * gray[idx - w] - gray[idx - w + 1] +
-        gray[idx + w - 1] + 2 * gray[idx + w] + gray[idx + w + 1];
-      edges[idx] = Math.sqrt(gx * gx + gy * gy);
-    }
-  }
-
-  // Step 2: Color quantization (reduce to ~8 levels per channel) + high contrast + draw edges
-  const imageData = ctx.getImageData(0, 0, w, h);
-  const d = imageData.data;
-  const levels = 6; // fewer levels = more cartoon-like
-  const step = 255 / levels;
-
-  for (let i = 0; i < w * h; i++) {
-    const j = i * 4;
-
-    // Boost contrast first
-    let r = clamp((d[j] - 128) * 1.4 + 128);
-    let g = clamp((d[j + 1] - 128) * 1.4 + 128);
-    let b = clamp((d[j + 2] - 128) * 1.4 + 128);
-
-    // Quantize
-    r = Math.round(r / step) * step;
-    g = Math.round(g / step) * step;
-    b = Math.round(b / step) * step;
-
-    // Edge overlay: darken where edges are strong
-    const edgeStrength = Math.min(1, edges[i] / 80);
-    if (edgeStrength > 0.3) {
-      const darkFactor = 1 - edgeStrength * 0.85;
-      r *= darkFactor;
-      g *= darkFactor;
-      b *= darkFactor;
-    }
-
-    d[j] = clamp(r);
-    d[j + 1] = clamp(g);
-    d[j + 2] = clamp(b);
-  }
-
-  ctx.putImageData(imageData, 0, 0);
 }
 
 /* ── Helpers ── */

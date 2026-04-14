@@ -86,7 +86,6 @@ export default {
   'export.filter.watercolor': 'Watercolor',
   'export.filter.sketch': 'Sketch',
   'export.filter.vintage': 'Vintage',
-  'export.filter.comic': 'Comic',
   'export.adjust.up': 'Pan up',
   'export.adjust.down': 'Pan down',
   'export.adjust.left': 'Pan left',

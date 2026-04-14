@@ -20,7 +20,7 @@ interface ExportPreviewProps {
 
 const FORMATS: ExportFormat[] = ['full', '1:1', '9:16', '4:3'];
 const BORDERS: ExportBorderStyle[] = ['classic', 'paper', 'minimal'];
-const FILTERS: StyleFilter[] = ['original', 'watercolor', 'sketch', 'vintage', 'comic'];
+const FILTERS: StyleFilter[] = ['original', 'watercolor', 'sketch', 'vintage'];
 const RESOLUTIONS = [1, 2, 3] as const;
 
 /** Copy text to clipboard with iOS Safari fallback */
@@ -63,7 +63,6 @@ const FILTER_LABEL: Record<StyleFilter, () => string> = {
   watercolor: () => t('export.filter.watercolor'),
   sketch: () => t('export.filter.sketch'),
   vintage: () => t('export.filter.vintage'),
-  comic: () => t('export.filter.comic'),
 };
 
 function sanitizeFilename(name: string): string {
@@ -80,7 +79,6 @@ function getAiPrompt(routeName: string, filter: StyleFilter): string {
     watercolor: `${base} in watercolor painting style. Soft wet-on-wet technique, gentle color bleeding at edges, subtle paper grain texture. Muted pastel earth tones with forest greens and sky blues. Delicate and airy feel, like a field journal illustration.`,
     sketch: `${base} in pencil sketch style. Fine graphite line work on white paper, cross-hatching for topographic shading, dotted trail paths. Black and white with subtle gray gradients. Clean architectural drawing aesthetic.`,
     vintage: `${base} in vintage cartographic style. Sepia-toned aged paper, classic hand-drawn contour lines, vignette darkening at corners. Reminiscent of 1950s national park service maps. Warm brown and cream palette.`,
-    comic: `${base} in comic book illustration style. Bold black outlines, flat color fills with limited palette, high contrast. Pop art influenced with quantized colors. Dynamic and playful, like a manga travel guide illustration.`,
   };
 
   return styleDesc[filter];
