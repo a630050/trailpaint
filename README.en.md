@@ -51,7 +51,7 @@ Click "Import" → "🤖 Create trail JSON with AI" → copy the prompt template
 
 ### Map
 
-- 🗺️ **Online Map** — OpenStreetMap with 4 basemap styles (Standard / Satellite / Contour / Dark)
+- 🗺️ **Online Map** — OpenStreetMap with 5 basemap styles (Standard / Satellite / Contour / Dark / Multilingual Vector)
 - 📷 **Screenshot Basemap** — Drag any image onto the map to use as custom basemap
 - 🔍 **Place Search** — Search any location, map flies there
 - ◎ **Locate** — One-tap geolocation
@@ -59,7 +59,7 @@ Click "Import" → "🤖 Create trail JSON with AI" → copy the prompt template
 ### Markers
 
 - 🖊️ **Route Drawing** — Hand-drawn dashed lines + directional arrows, 5-color auto-cycle
-- 📍 **Spot Cards** — Paper-textured hand-drawn style, with photos, 21 icon types, drag-to-position
+- 📍 **Spot Cards** — Paper-textured hand-drawn style, with photos, 26 icon types, drag-to-position
 - ✏️ **Route Editing** — Drag nodes to adjust, double-click to delete, change color
 - 🔎 **Zoom-Aware Cards** — Cards scale with map zoom level
 - 👆 **Touch Drag** — Drag cards with your finger on mobile
@@ -75,9 +75,10 @@ Click "Import" → "🤖 Create trail JSON with AI" → copy the prompt template
 ### Export
 
 - 📐 **Export Preview** — Real-time preview overlay with all options in one place
+- 🎯 **Composition Adjust** — Pan and zoom controls in preview to fine-tune framing
 - 📐 **Multi-Ratio** — 1:1 (IG) / 9:16 (Story) / 4:3 / Original
 - 🖼️ **3 Border Styles** — Classic double / Paper hand-drawn / Minimal thin
-- 🎨 **5 Style Filters** — Original / Watercolor / Sketch / Vintage / Comic
+- 🎨 **4 Style Filters** — Original / Watercolor / Sketch / Vintage
 - 📊 **Stats Overlay** — Distance, time, elevation gain printed on image
 - 🔗 **Share Link** — Generate shareable URL (optional short link)
 - 🤖 **AI Prompt** — Copy a stylized prompt for AI image generation
@@ -96,17 +97,17 @@ Click "Import" → "🤖 Create trail JSON with AI" → copy the prompt template
 - 🌐 **Three Languages** — Chinese / English / Japanese, auto-detected
 - ☰ **Mobile Bottom Menu** — Floating action menu when sidebar is closed
 
-### POI Icons (21 types)
+### POI Icons (26 types)
 
 🌿 Plant 🌸 Flower 🌲 Tree 🐦 Bird 🦋 Insect 💧 Water 🐟 Fish 🍄 Mushroom ⛰️ Rock
-🚻 Restroom 🚌 Bus Stop 🪑 Rest Area 🥤 Restaurant 🚲 Bicycle 🅿️ Parking 🩺 First Aid
-🔭 Viewpoint 📷 Photo Spot ⚠️ Caution ℹ️ Info 📍 Pin
+🚻 Restroom 🚌 Bus Stop 🛋️ Rest Area ⛺ Camping 🥤 Restaurant 🚲 Bicycle 🅿️ Parking 🩺 First Aid 🏖️ Beach 🎠 Amusement
+🔍 Viewpoint 🔭 Stargazing 📷 Photo Spot ⚠️ Caution ℹ️ Info 📍 Pin
 
 ---
 
 ## Want a More Hand-Drawn Look?
 
-Choose a style filter when exporting (Watercolor, Sketch, Vintage, Comic), or feed the exported image to ChatGPT / Gemini with a prompt like "create a comic-style map":
+Choose a style filter when exporting (Watercolor, Sketch, Vintage), or feed the exported image to ChatGPT / Gemini with a prompt like "create a hand-drawn style map":
 
 ![Gemini_Generated_Image.jpg](./examples/Gemini_Generated_Image.jpg)
 
@@ -118,11 +119,11 @@ Choose a style filter when exporting (Watercolor, Sketch, Vintage, Comic), or fe
 |---------|---------|------|
 | Leaflet | Map engine | [leafletjs.com](https://leafletjs.com) |
 | OpenStreetMap | Map data (local language labels) | [openstreetmap.org](https://www.openstreetmap.org) |
+| Protomaps | Multilingual vector map tiles | [protomaps.com](https://protomaps.com) |
 | CARTO | Map tiles | [carto.com](https://carto.com) |
 | Nominatim | Place search | [nominatim.org](https://nominatim.openstreetmap.org) |
 | Open-Meteo | Elevation data | [open-meteo.com](https://open-meteo.com) |
-
-All services are free public APIs — no API keys required.
+| TinyURL | URL shortening | [tinyurl.com](https://tinyurl.com) |
 
 ## Offline Version
 
@@ -135,7 +136,7 @@ For fully offline use, download [`trailpaint.html`](trailpaint.html) and open in
 ## Technical Architecture
 
 - **Framework**: Vite + React 19 + TypeScript
-- **Map**: Leaflet + react-leaflet (CARTO Voyager tiles)
+- **Map**: Leaflet + react-leaflet + protomaps-leaflet (CARTO + Protomaps vector tiles)
 - **State**: Zustand + zundo (temporal undo/redo)
 - **PWA**: vite-plugin-pwa + Workbox
 - **Export**: html-to-image + Canvas post-processing + style filters
