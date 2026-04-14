@@ -148,7 +148,6 @@ export default function App() {
         <ExportPreview
           baseImage={exportPreviewImage}
           onClose={() => setExportPreviewImage(null)}
-          onRecapture={captureMap}
           onAdjust={handleAdjustView}
         />
       )}

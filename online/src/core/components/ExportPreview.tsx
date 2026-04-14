@@ -14,14 +14,12 @@ import './ExportPreview.css';
 interface ExportPreviewProps {
   baseImage: HTMLImageElement | null;
   onClose: () => void;
-  onRecapture: (pixelRatio: number) => Promise<HTMLImageElement>;
   onAdjust: (dx: number, dy: number, dZoom: number) => Promise<HTMLImageElement>;
 }
 
 const FORMATS: ExportFormat[] = ['full', '1:1', '9:16', '4:3'];
 const BORDERS: ExportBorderStyle[] = ['classic', 'paper', 'minimal'];
 const FILTERS: StyleFilter[] = ['original', 'sketch'];
-const RESOLUTIONS = [1, 2, 3] as const;
 
 /** Copy text to clipboard with iOS Safari fallback */
 async function copyToClipboard(text: string): Promise<boolean> {
@@ -82,7 +80,7 @@ function getAiPrompt(routeName: string, filter: StyleFilter): string {
 
 const PAN_STEP = 80; // pixels per click
 
-export default function ExportPreview({ baseImage, onClose, onRecapture, onAdjust }: ExportPreviewProps) {
+export default function ExportPreview({ baseImage, onClose, onAdjust }: ExportPreviewProps) {
   const routes = useProjectStore((s) => s.project.routes);
   const projectName = useProjectStore((s) => s.project.name);
   const showWatermark = useProjectStore((s) => s.watermark);
@@ -91,7 +89,6 @@ export default function ExportPreview({ baseImage, onClose, onRecapture, onAdjus
   const [format, setFormat] = useState<ExportFormat>('full');
   const [borderStyle, setBorderStyle] = useState<ExportBorderStyle>('classic');
   const [filter, setFilter] = useState<StyleFilter>('original');
-  const [pixelRatio, setPixelRatio] = useState(2);
   const [downloading, setDownloading] = useState(false);
   const [adjusting, setAdjusting] = useState(false);
   const [toast, setToast] = useState('');
@@ -142,24 +139,15 @@ export default function ExportPreview({ baseImage, onClose, onRecapture, onAdjus
     ctx.drawImage(canvas, 0, 0, preview.width, preview.height);
   }, [baseImage, format, borderStyle, filter, showWatermark, routes]);
 
-  // Download at full resolution
+  // Download at full resolution (always 2x)
   const handleDownload = useCallback(async () => {
     if (!baseImage) return;
 
-    if (pixelRatio >= 3 && !confirm(t('export.3xWarn'))) return;
-
     setDownloading(true);
-    // Let UI update before heavy work
     await new Promise((r) => setTimeout(r, 50));
 
     try {
-      // If pixelRatio != 2 (base capture ratio), re-capture at correct DPI
-      let img = baseImage;
-      if (pixelRatio !== 2) {
-        img = await onRecapture(pixelRatio);
-      }
-
-      const canvas = renderExportCanvas(img, {
+      const canvas = renderExportCanvas(baseImage, {
         format,
         borderStyle,
         filter,
@@ -171,9 +159,8 @@ export default function ExportPreview({ baseImage, onClose, onRecapture, onAdjus
       const link = document.createElement('a');
       const date = new Date().toISOString().slice(0, 10);
       const fmtSuffix = format === 'full' ? '' : `-${format.replace(':', 'x')}`;
-      const dpiSuffix = `-${pixelRatio}x`;
       const filterSuffix = filter === 'original' ? '' : `-${filter}`;
-      link.download = `trailpaint-${sanitizeFilename(projectName)}-${date}${fmtSuffix}${dpiSuffix}${filterSuffix}.png`;
+      link.download = `trailpaint-${sanitizeFilename(projectName)}-${date}${fmtSuffix}${filterSuffix}.png`;
       link.href = finalUrl;
       link.click();
     } catch (err) {
@@ -182,7 +169,7 @@ export default function ExportPreview({ baseImage, onClose, onRecapture, onAdjus
     } finally {
       setDownloading(false);
     }
-  }, [baseImage, pixelRatio, format, borderStyle, filter, showWatermark, routes, projectName, onRecapture]);
+  }, [baseImage, format, borderStyle, filter, showWatermark, routes, projectName]);
 
   const handleCopyShareLink = useCallback(async () => {
     try {
@@ -305,22 +292,6 @@ export default function ExportPreview({ baseImage, onClose, onRecapture, onAdjus
                     onClick={() => setFilter(f)}
                   >
                     {FILTER_LABEL[f]()}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Resolution */}
-            <div className="export-preview__section">
-              <label className="export-preview__label">{t('export.preview.resolution')}</label>
-              <div className="export-preview__chips">
-                {RESOLUTIONS.map((r) => (
-                  <button
-                    key={r}
-                    className={`export-preview__chip${pixelRatio === r ? ' export-preview__chip--active' : ''}${r === 3 ? ' export-preview__chip--3x' : ''}`}
-                    onClick={() => setPixelRatio(r)}
-                  >
-                    {r}x{r === 3 ? ' ⚠️' : ''}
                   </button>
                 ))}
               </div>
