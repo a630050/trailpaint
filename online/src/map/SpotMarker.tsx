@@ -12,14 +12,14 @@ function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-/** Zoom-aware scale: linear, clamped 0.5–1.3, baseZoom=14 */
+/** Zoom-aware scale: linear, clamped 0.5–1, baseZoom=14 */
 function getZoomScale(zoom: number): number {
-  return Math.max(0.5, Math.min(1.3, 1 + (zoom - 14) * 0.12));
+  return Math.max(0.5, Math.min(1, 1 + (zoom - 14) * 0.12));
 }
 
 const MOBILE_MQ = '(max-width: 768px)';
-const CARD_W_DESKTOP = 150;
-const CARD_W_MOBILE = 120;
+const CARD_W_DESKTOP = 120;
+const CARD_W_MOBILE = 100;
 
 export default function SpotMarker({ spot }: { spot: Spot }) {
   const map = useMap();
@@ -34,8 +34,8 @@ export default function SpotMarker({ spot }: { spot: Spot }) {
   const pinIcon = L.divIcon({
     className: 'spot-pin',
     html: `<div class="spot-pin__circle"><span>${escapeHtml(icon.emoji)}</span></div>`,
-    iconSize: [50, 50],
-    iconAnchor: [25, 25],
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
   });
 
   const onMarkerDragEnd = useCallback(() => {

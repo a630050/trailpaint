@@ -1,5 +1,4 @@
 import type { Spot } from '../models/types';
-import { getIcon } from '../icons';
 
 interface SpotCardProps {
   spot: Spot;
@@ -8,8 +7,6 @@ interface SpotCardProps {
 }
 
 export default function SpotCard({ spot, selected, onSelect }: SpotCardProps) {
-  const icon = getIcon(spot.iconId);
-
   return (
     <div
       className={`spot-card${selected ? ' spot-card--selected' : ''}`}
@@ -21,7 +18,6 @@ export default function SpotCard({ spot, selected, onSelect }: SpotCardProps) {
       {/* Title tag */}
       <div className="spot-card__title-tag">
         <span className="spot-card__hole" />
-        <span className="spot-card__icon">{icon.emoji}</span>
         <span className="spot-card__title">{spot.title}</span>
       </div>
 

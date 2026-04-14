@@ -85,6 +85,81 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
+/* Loading overlay during view adjustment */
+.export-preview__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(240, 232, 216, 0.7);
+  font-size: 14px;
+  color: #78350f;
+  font-family: Georgia, serif;
+  z-index: 1;
+}
+
+/* View adjustment controls (direction pad + zoom) */
+.export-preview__adjust {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  z-index: 2;
+}
+
+.export-preview__adjust-pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.export-preview__adjust-row {
+  display: flex;
+  gap: 2px;
+}
+
+.export-preview__adjust-zoom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.export-preview__adjust-btn {
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid #d4a574;
+  background: rgba(253, 248, 239, 0.9);
+  color: #78350f;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
+  padding: 0;
+  line-height: 1;
+}
+
+.export-preview__adjust-btn:hover:not(:disabled) {
+  background: #fde68a;
+}
+
+.export-preview__adjust-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Make canvas-wrap relative for absolute children */
+.export-preview__canvas-wrap {
+  position: relative;
+}
+
 /* Controls panel */
 .export-preview__controls {
   width: 260px;

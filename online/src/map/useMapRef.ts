@@ -26,3 +26,14 @@ export function panBy(dx: number, dy: number) {
     }
   }
 }
+
+/** Change zoom by delta (e.g. +1 or -1) without animation. */
+export function zoomBy(delta: number) {
+  if (mapInstance) {
+    try {
+      mapInstance.setZoom(mapInstance.getZoom() + delta);
+    } catch {
+      // Map may have been destroyed
+    }
+  }
+}

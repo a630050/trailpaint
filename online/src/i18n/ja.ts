@@ -87,6 +87,12 @@ export default {
   'export.filter.sketch': 'スケッチ',
   'export.filter.vintage': 'ヴィンテージ',
   'export.filter.comic': 'コミック',
+  'export.adjust.up': '上に移動',
+  'export.adjust.down': '下に移動',
+  'export.adjust.left': '左に移動',
+  'export.adjust.right': '右に移動',
+  'export.adjust.zoomIn': 'ズームイン',
+  'export.adjust.zoomOut': 'ズームアウト',
 
   // Import
   'app.import': '📥 インポート',

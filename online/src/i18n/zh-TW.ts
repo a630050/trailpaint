@@ -87,6 +87,12 @@ export default {
   'export.filter.sketch': '素描',
   'export.filter.vintage': '復古',
   'export.filter.comic': '漫畫',
+  'export.adjust.up': '上移',
+  'export.adjust.down': '下移',
+  'export.adjust.left': '左移',
+  'export.adjust.right': '右移',
+  'export.adjust.zoomIn': '放大',
+  'export.adjust.zoomOut': '縮小',
 
   // Import
   'app.import': '📥 匯入',

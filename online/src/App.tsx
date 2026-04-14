@@ -9,7 +9,7 @@ import ImportWizard from './core/components/ImportWizard';
 import FloatingActions from './core/components/FloatingActions';
 import { captureMap, saveProject } from './map/ExportButton';
 import { decodeShareLink } from './core/utils/shareLink';
-import { flyTo, panBy } from './map/useMapRef';
+import { flyTo, panBy, zoomBy } from './map/useMapRef';
 import { useUndoRedoKeys } from './core/hooks/useUndoRedo';
 import { useProjectStore } from './core/store/useProjectStore';
 import { t } from './i18n';
@@ -84,6 +84,16 @@ export default function App() {
     }
   }, []);
 
+  const handleAdjustView = useCallback(async (dx: number, dy: number, dZoom: number): Promise<HTMLImageElement> => {
+    if (dx || dy) panBy(dx, dy);
+    if (dZoom) zoomBy(dZoom);
+    // Wait for tiles to load after adjustment
+    await new Promise((r) => setTimeout(r, 400));
+    const img = await captureMap(2);
+    setExportPreviewImage(img);
+    return img;
+  }, []);
+
   const handleOpenImportWizard = useCallback(() => {
     setImportWizardOpen(true);
   }, []);
@@ -139,6 +149,7 @@ export default function App() {
           baseImage={exportPreviewImage}
           onClose={() => setExportPreviewImage(null)}
           onRecapture={captureMap}
+          onAdjust={handleAdjustView}
         />
       )}
       {importWizardOpen && (

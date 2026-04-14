@@ -15,6 +15,7 @@ interface ExportPreviewProps {
   baseImage: HTMLImageElement | null;
   onClose: () => void;
   onRecapture: (pixelRatio: number) => Promise<HTMLImageElement>;
+  onAdjust: (dx: number, dy: number, dZoom: number) => Promise<HTMLImageElement>;
 }
 
 const FORMATS: ExportFormat[] = ['full', '1:1', '9:16', '4:3'];
@@ -85,7 +86,9 @@ function getAiPrompt(routeName: string, filter: StyleFilter): string {
   return styleDesc[filter];
 }
 
-export default function ExportPreview({ baseImage, onClose, onRecapture }: ExportPreviewProps) {
+const PAN_STEP = 80; // pixels per click
+
+export default function ExportPreview({ baseImage, onClose, onRecapture, onAdjust }: ExportPreviewProps) {
   const routes = useProjectStore((s) => s.project.routes);
   const projectName = useProjectStore((s) => s.project.name);
   const showWatermark = useProjectStore((s) => s.watermark);
@@ -96,6 +99,7 @@ export default function ExportPreview({ baseImage, onClose, onRecapture }: Expor
   const [filter, setFilter] = useState<StyleFilter>('original');
   const [pixelRatio, setPixelRatio] = useState(2);
   const [downloading, setDownloading] = useState(false);
+  const [adjusting, setAdjusting] = useState(false);
   const [toast, setToast] = useState('');
 
   const previewRef = useRef<HTMLCanvasElement>(null);
@@ -106,6 +110,18 @@ export default function ExportPreview({ baseImage, onClose, onRecapture }: Expor
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(''), 2000);
   }, []);
+
+  const handleAdjust = useCallback(async (dx: number, dy: number, dZoom: number) => {
+    if (adjusting) return;
+    setAdjusting(true);
+    try {
+      await onAdjust(dx, dy, dZoom);
+    } catch (err) {
+      console.error('Adjust failed:', err);
+    } finally {
+      setAdjusting(false);
+    }
+  }, [adjusting, onAdjust]);
 
   // Render preview whenever settings change
   useEffect(() => {
@@ -232,6 +248,22 @@ export default function ExportPreview({ baseImage, onClose, onRecapture }: Expor
           {/* Preview area */}
           <div className="export-preview__canvas-wrap">
             <canvas ref={previewRef} className="export-preview__canvas" />
+            {adjusting && <div className="export-preview__loading">{t('export.preview.capturing')}</div>}
+            {/* View adjustment controls */}
+            <div className="export-preview__adjust">
+              <div className="export-preview__adjust-pad">
+                <button className="export-preview__adjust-btn" disabled={adjusting} onClick={() => handleAdjust(0, -PAN_STEP, 0)} title={t('export.adjust.up')}>▲</button>
+                <div className="export-preview__adjust-row">
+                  <button className="export-preview__adjust-btn" disabled={adjusting} onClick={() => handleAdjust(-PAN_STEP, 0, 0)} title={t('export.adjust.left')}>◀</button>
+                  <button className="export-preview__adjust-btn" disabled={adjusting} onClick={() => handleAdjust(PAN_STEP, 0, 0)} title={t('export.adjust.right')}>▶</button>
+                </div>
+                <button className="export-preview__adjust-btn" disabled={adjusting} onClick={() => handleAdjust(0, PAN_STEP, 0)} title={t('export.adjust.down')}>▼</button>
+              </div>
+              <div className="export-preview__adjust-zoom">
+                <button className="export-preview__adjust-btn" disabled={adjusting} onClick={() => handleAdjust(0, 0, 0.5)} title={t('export.adjust.zoomIn')}>+</button>
+                <button className="export-preview__adjust-btn" disabled={adjusting} onClick={() => handleAdjust(0, 0, -0.5)} title={t('export.adjust.zoomOut')}>−</button>
+              </div>
+            </div>
           </div>
 
           {/* Controls */}

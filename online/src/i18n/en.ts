@@ -87,6 +87,12 @@ export default {
   'export.filter.sketch': 'Sketch',
   'export.filter.vintage': 'Vintage',
   'export.filter.comic': 'Comic',
+  'export.adjust.up': 'Pan up',
+  'export.adjust.down': 'Pan down',
+  'export.adjust.left': 'Pan left',
+  'export.adjust.right': 'Pan right',
+  'export.adjust.zoomIn': 'Zoom in',
+  'export.adjust.zoomOut': 'Zoom out',
 
   // Import
   'app.import': '📥 Import',

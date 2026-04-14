@@ -2,7 +2,7 @@
 
 .spot-card {
   position: relative;
-  width: 150px;
+  width: 120px;
   font-family: Georgia, 'Times New Roman', serif;
   cursor: pointer;
   user-select: none;
@@ -32,9 +32,9 @@
     ),
     rgba(254,243,199,0.97);
   /* 不規則 border-radius 強化手繪感 */
-  border: 1.8px solid #c96a00;
-  border-radius: 4px 9px 5px 11px;
-  padding: 8px 12px;
+  border: 1.5px solid #c96a00;
+  border-radius: 4px 8px 5px 10px;
+  padding: 6px 10px;
   text-align: center;
   /* 微妙外框變形讓整體稍歪 */
   transform: rotate(-0.4deg);
@@ -56,15 +56,9 @@
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.35);
 }
 
-.spot-card__icon {
-  font-size: 20px;
-  margin-right: 4px;
-  vertical-align: middle;
-}
-
 /* 標題文字：微幅旋轉增加手寫感，與卡片整體旋轉相抵消一點 */
 .spot-card__title {
-  font-size: 15px;
+  font-size: 12px;
   font-weight: bold;
   color: #3b1a06;
   vertical-align: middle;
@@ -91,7 +85,7 @@
 
 .spot-card__photo {
   width: 100%;
-  max-height: 120px;
+  max-height: 100px;
   object-fit: cover;
   border-radius: 4px;
   display: block;
@@ -112,7 +106,7 @@
   border-top: none;
   border-radius: 0 0 7px 11px;
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: 11px;
   color: #5c3a10;
   line-height: 1.4;
   word-break: break-word;
@@ -121,11 +115,11 @@
 
 /* ── Mobile: smaller card ── */
 @media (max-width: 768px) {
-  .spot-card { width: 120px; }
-  .spot-card__title-tag { padding: 6px 10px; }
-  .spot-card__title { font-size: 13px; }
-  .spot-card__desc { padding: 5px 8px; font-size: 12px; }
-  .spot-card__photo { max-height: 90px; }
+  .spot-card { width: 100px; }
+  .spot-card__title-tag { padding: 5px 8px; }
+  .spot-card__title { font-size: 12px; }
+  .spot-card__desc { padding: 4px 7px; font-size: 10px; }
+  .spot-card__photo { max-height: 75px; }
 }
 
 /* Number badge (top-right of title tag) */
