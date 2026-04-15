@@ -270,6 +270,20 @@
   background: #92400e;
 }
 
+.export-preview__ai-row {
+  display: flex;
+  gap: 6px;
+}
+
+.export-preview__ai-row .export-preview__select {
+  flex: 1;
+}
+
+.export-preview__ai-row .export-preview__btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 /* Toast */
 .export-preview__toast {
   position: absolute;

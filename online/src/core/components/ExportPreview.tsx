@@ -72,17 +72,22 @@ function sanitizeFilename(name: string): string {
   return name.replace(/[/\\:*?"<>|]/g, '_').slice(0, 100) || 'Untitled';
 }
 
-function getAiPrompt(routeName: string, filter: StyleFilter): string {
-  // Sanitize: keep letters, numbers, whitespace, basic punctuation only
+type AiStyle = 'japanese' | 'treasure' | 'kawaii' | 'minimal';
+
+const AI_STYLES: AiStyle[] = ['japanese', 'treasure', 'kawaii', 'minimal'];
+
+function getAiPrompt(routeName: string, aiStyle: AiStyle): string {
   const name = routeName.replace(/[^\p{L}\p{N}\s\-·—.,()]/gu, '').trim().slice(0, 100) || 'a hiking trail';
   const base = `An illustrated trail map of "${name}"`;
 
-  const styleDesc: Record<StyleFilter, string> = {
-    original: `${base}, hand-drawn cartographic style with warm paper texture, Georgia serif typography, dashed trail paths with directional arrows, nature icons for points of interest. Warm earth tones (#78350f, #fdf8ef). Stationery illustration aesthetic.`,
-    sketch: `${base} in pencil sketch style. Fine graphite line work on white paper, cross-hatching for topographic shading, dotted trail paths. Black and white with subtle gray gradients. Clean architectural drawing aesthetic.`,
+  const prompts: Record<AiStyle, string> = {
+    japanese: `${base}, Japanese hand-drawn cartographic style (手描き地図). Warm washi paper texture, soft watercolor washes for terrain, delicate ink outlines, handwritten-style labels in a mix of kanji and Latin script. Muted earth tones with gentle greens and warm browns. Illustrated travel journal (旅ノート) aesthetic.`,
+    treasure: `${base} in antique treasure map style. Aged parchment with burnt edges and coffee stains, ornate compass rose, hand-drawn topographic features with hachure shading, sea-monster-style decorative illustrations in margins. Sepia ink with gold and deep brown tones. Old-world cartography aesthetic, as if drawn by an 18th-century explorer.`,
+    kawaii: `${base} in cute kawaii cartoon style. Rounded soft shapes, pastel color palette (mint green, baby pink, cream, lavender), tiny smiling trees and clouds, chibi-style hikers, bubble-letter labels. Flat design with subtle shadows. Cheerful, cozy, sticker-sheet aesthetic.`,
+    minimal: `${base} in minimal line art style. Single-weight black ink lines on pure white background, no fills or shading, clean geometric icons for landmarks, trail shown as a simple dotted line. Labels in casual handwritten font. Generous whitespace. Modern minimalist poster aesthetic, inspired by Muji design language.`,
   };
 
-  return styleDesc[filter];
+  return prompts[aiStyle];
 }
 
 const PAN_STEP = 80; // pixels per click
@@ -99,6 +104,7 @@ export default function ExportPreview({ baseImage, onClose, onAdjust }: ExportPr
   const [downloading, setDownloading] = useState(false);
   const [adjusting, setAdjusting] = useState(false);
   const [toast, setToast] = useState('');
+  const [aiStyle, setAiStyle] = useState<AiStyle>('japanese');
 
   const previewRef = useRef<HTMLCanvasElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -205,14 +211,14 @@ export default function ExportPreview({ baseImage, onClose, onAdjust }: ExportPr
 
   const handleCopyAiPrompt = useCallback(async () => {
     const routeName = routes[0]?.name?.trim() ?? projectName;
-    const text = getAiPrompt(routeName, filter);
+    const text = getAiPrompt(routeName, aiStyle);
     const ok = await copyToClipboard(text);
     if (ok) {
       showToast(t('export.preview.aiCopied'));
     } else {
       window.prompt('Copy this prompt:', text);
     }
-  }, [routes, projectName, filter, showToast]);
+  }, [routes, projectName, aiStyle, showToast]);
 
   // Close on Escape
   useEffect(() => {
@@ -329,12 +335,23 @@ export default function ExportPreview({ baseImage, onClose, onAdjust }: ExportPr
                   ✂️
                 </button>
               </div>
-              <button
-                className="export-preview__btn"
-                onClick={handleCopyAiPrompt}
-              >
-                🤖 {t('export.preview.aiPrompt')}
-              </button>
+              <div className="export-preview__ai-row">
+                <select
+                  className="export-preview__select"
+                  value={aiStyle}
+                  onChange={(e) => setAiStyle(e.target.value as AiStyle)}
+                >
+                  {AI_STYLES.map((s) => (
+                    <option key={s} value={s}>{t(`export.ai.${s}`)}</option>
+                  ))}
+                </select>
+                <button
+                  className="export-preview__btn"
+                  onClick={handleCopyAiPrompt}
+                >
+                  🤖 {t('export.preview.aiPrompt')}
+                </button>
+              </div>
             </div>
           </div>
         </div>
