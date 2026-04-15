@@ -8,7 +8,7 @@ import {
 } from '../utils/exportRenderer';
 import { applyStyleFilter } from '../utils/styleFilters';
 import { encodeShareLink, shortenUrl } from '../utils/shareLink';
-import { t } from '../../i18n';
+import { t, currentLocale } from '../../i18n';
 import './ExportPreview.css';
 
 interface ExportPreviewProps {
@@ -76,15 +76,22 @@ type AiStyle = 'japanese' | 'treasure' | 'kawaii' | 'minimal';
 
 const AI_STYLES: AiStyle[] = ['japanese', 'treasure', 'kawaii', 'minimal'];
 
+const LOCALE_LABEL_INSTRUCTION: Record<string, string> = {
+  'zh-TW': 'All text labels on the map MUST be written in Traditional Chinese (繁體中文). Do NOT use Simplified Chinese or garbled characters.',
+  'ja': 'All text labels on the map MUST be written in Japanese (日本語).',
+  'en': 'All text labels on the map should be written in English.',
+};
+
 function getAiPrompt(routeName: string, aiStyle: AiStyle): string {
   const name = routeName.replace(/[^\p{L}\p{N}\s\-·—.,()]/gu, '').trim().slice(0, 100) || 'a hiking trail';
   const base = `An illustrated trail map of "${name}"`;
+  const langRule = LOCALE_LABEL_INSTRUCTION[currentLocale] ?? LOCALE_LABEL_INSTRUCTION['en'];
 
   const prompts: Record<AiStyle, string> = {
-    japanese: `${base}, Japanese hand-drawn cartographic style (手描き地図). Warm washi paper texture, soft watercolor washes for terrain, delicate ink outlines, handwritten-style labels in a mix of kanji and Latin script. Muted earth tones with gentle greens and warm browns. Illustrated travel journal (旅ノート) aesthetic.`,
-    treasure: `${base} in antique treasure map style. Aged parchment with burnt edges and coffee stains, ornate compass rose, hand-drawn topographic features with hachure shading, sea-monster-style decorative illustrations in margins. Sepia ink with gold and deep brown tones. Old-world cartography aesthetic, as if drawn by an 18th-century explorer.`,
-    kawaii: `${base} in cute kawaii cartoon style. Rounded soft shapes, pastel color palette (mint green, baby pink, cream, lavender), tiny smiling trees and clouds, chibi-style hikers, bubble-letter labels. Flat design with subtle shadows. Cheerful, cozy, sticker-sheet aesthetic.`,
-    minimal: `${base} in minimal line art style. Single-weight black ink lines on pure white background, no fills or shading, clean geometric icons for landmarks, trail shown as a simple dotted line. Labels in casual handwritten font. Generous whitespace. Modern minimalist poster aesthetic, inspired by Muji design language.`,
+    japanese: `${base}, Japanese hand-drawn cartographic style (手描き地図). Warm washi paper texture, soft watercolor washes for terrain, delicate ink outlines, handwritten-style labels. Muted earth tones with gentle greens and warm browns. Illustrated travel journal (旅ノート) aesthetic. ${langRule}`,
+    treasure: `${base} in antique treasure map style. Aged parchment with burnt edges and coffee stains, ornate compass rose, hand-drawn topographic features with hachure shading, sea-monster-style decorative illustrations in margins. Sepia ink with gold and deep brown tones. Old-world cartography aesthetic, as if drawn by an 18th-century explorer. ${langRule}`,
+    kawaii: `${base} in cute kawaii cartoon style. Rounded soft shapes, pastel color palette (mint green, baby pink, cream, lavender), tiny smiling trees and clouds, chibi-style hikers, bubble-letter labels. Flat design with subtle shadows. Cheerful, cozy, sticker-sheet aesthetic. ${langRule}`,
+    minimal: `${base} in minimal line art style. Single-weight black ink lines on pure white background, no fills or shading, clean geometric icons for landmarks, trail shown as a simple dotted line. Labels in casual handwritten font. Generous whitespace. Modern minimalist poster aesthetic, inspired by Muji design language. ${langRule}`,
   };
 
   return prompts[aiStyle];
