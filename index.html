@@ -10,7 +10,50 @@
   <meta property="og:image" content="https://trailpaint.org/examples/trailpaint-map.jpg"/>
   <meta property="og:type" content="website"/>
   <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="TrailPaint 路小繪 — 手繪風路線地圖工具"/>
+  <meta name="twitter:description" content="在真實地圖上製作手繪風格的路線插畫。景點卡片、照片標記、GPX 匯入，匯出可分享的漂亮地圖。"/>
+  <meta name="twitter:image" content="https://trailpaint.org/examples/trailpaint-map.jpg"/>
+  <meta property="og:url" content="https://trailpaint.org/"/>
+  <meta property="og:locale" content="zh_TW"/>
+  <meta property="og:site_name" content="TrailPaint 路小繪"/>
+  <link rel="canonical" href="https://trailpaint.org/"/>
   <link rel="icon" type="image/svg+xml" href="/app/favicon.svg"/>
+  <link rel="apple-touch-icon" href="/app/favicon.svg"/>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "TrailPaint 路小繪",
+    "url": "https://trailpaint.org/app/",
+    "description": "在真實地圖上製作手繪風格的路線插畫。景點卡片、照片標記、GPX 匯入，匯出可分享的漂亮地圖。",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "TWD"
+    },
+    "inLanguage": ["zh-TW", "en", "ja"],
+    "screenshot": "https://trailpaint.org/examples/trailpaint-map.jpg",
+    "featureList": [
+      "路線繪製（5 色虛線+箭頭）",
+      "景點卡片（26 種圖示）",
+      "照片標記",
+      "GPX 匯入",
+      "手繪風濾鏡",
+      "高品質 2x 匯出",
+      "分享連結",
+      "海拔剖面圖",
+      "多語支援（繁中/英/日）"
+    ],
+    "author": {
+      "@type": "Organization",
+      "name": "NotoriousLab",
+      "url": "https://github.com/notoriouslab"
+    },
+    "license": "https://opensource.org/licenses/MIT"
+  }
+  </script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
@@ -97,6 +140,33 @@
     }
     .links a:hover { border-bottom-color:#d4a574; }
 
+    .about {
+      max-width:640px;
+      margin:0 auto;
+      padding:0 1.5rem 3rem;
+      line-height:1.8;
+      color:#d4a574;
+      font-size:1rem;
+    }
+    .about h2 {
+      color:#fde68a;
+      font-size:1.4rem;
+      margin:2rem 0 0.8rem;
+    }
+    .about p { margin-bottom:1rem; }
+    .about ul {
+      list-style:none;
+      padding:0;
+    }
+    .about ul li {
+      padding:0.3rem 0;
+    }
+    .about ul li::before {
+      content:"—";
+      margin-right:0.5rem;
+      color:#8b6940;
+    }
+
     .footer {
       padding:1.5rem;
       text-align:center;
@@ -131,8 +201,33 @@
     </p>
   </div>
 
-  <div class="footer">
-    NotoriousLab
-  </div>
+  <section class="about">
+    <h2>什麼是 TrailPaint？</h2>
+    <p>TrailPaint 路小繪是一個免費、開源的瀏覽器工具，讓你在真實地圖上製作手繪風格的路線插畫。不需要安裝軟體、不需要註冊帳號，打開瀏覽器就能開始。</p>
+
+    <h2>適合誰用？</h2>
+    <p>登山、健行、單車、城市散步、旅行紀錄 — 任何想把走過的路線變成一張漂亮地圖的人。無論是分享到社群、放進部落格文章，或是印出來當紀念，TrailPaint 產出的地圖都像是一幅手繪插畫。</p>
+
+    <h2>主要功能</h2>
+    <ul>
+      <li>在地圖上繪製路線，5 種顏色搭配虛線與箭頭方向</li>
+      <li>放置景點卡片，手繪紙紋風格，26 種圖示分類</li>
+      <li>在路線上標記照片，匯出時自動嵌入地圖</li>
+      <li>匯入 GPX 軌跡檔，GPS 紀錄自動轉為路線</li>
+      <li>海拔剖面圖與路線統計（距離、爬升、預估時間）</li>
+      <li>手繪風素描濾鏡，讓地圖看起來像插畫</li>
+      <li>高品質 2x 解析度 PNG 匯出</li>
+      <li>產生分享連結，一鍵傳給朋友</li>
+      <li>支援繁體中文、英文、日文三種語言</li>
+      <li>PWA 離線支援，手機也能使用</li>
+    </ul>
+
+    <h2>怎麼開始？</h2>
+    <p>點擊上方「開始使用」進入線上版，選擇底圖、畫路線、放景點卡片，完成後匯出你的手繪地圖。也可以從範例步道開始體驗。完全免費，資料儲存在你的瀏覽器本地，不會上傳到任何伺服器。</p>
+  </section>
+
+  <footer class="footer">
+    NotoriousLab · <a href="https://github.com/notoriouslab/trailpaint" style="color:#8b6940;">GitHub</a>
+  </footer>
 </body>
 </html>
