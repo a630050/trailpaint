@@ -70,6 +70,30 @@ export default function SpotEditor({ spot, onUpdate, onDelete, onClose }: SpotEd
     window.addEventListener('mouseup', onUp);
   };
 
+  const onPhotoTouchStart = (e: React.TouchEvent) => {
+    setIsDraggingPhoto(true);
+    const touch = e.touches[0];
+    dragStartRef.current = { y: touch.clientY, py: spot.photoY ?? 50 };
+
+    const onTouchMove = (ev: TouchEvent) => {
+      if (!dragStartRef.current) return;
+      const touch = ev.touches[0];
+      const delta = (touch.clientY - dragStartRef.current.y) / 2;
+      const nextY = Math.max(0, Math.min(100, dragStartRef.current.py - delta));
+      onUpdate({ photoY: nextY });
+    };
+
+    const onTouchEnd = () => {
+      setIsDraggingPhoto(false);
+      dragStartRef.current = null;
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+    };
+
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
+  };
+
   const currentIcon = getIcon(spot.iconId, spot.customEmoji);
 
   return (
@@ -139,6 +163,7 @@ export default function SpotEditor({ spot, onUpdate, onDelete, onClose }: SpotEd
           <div 
             className={`spot-editor__photo-container${isDraggingPhoto ? ' spot-editor__photo-container--dragging' : ''}`}
             onMouseDown={onPhotoMouseDown}
+            onTouchStart={onPhotoTouchStart}
             onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
             onDrop={(e) => {
               e.preventDefault();

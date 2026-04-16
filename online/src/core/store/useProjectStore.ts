@@ -226,9 +226,15 @@ export const useProjectStore = create<ProjectState>()(
 
   nextSpot: () => {
     const s = get();
-    if (s.project.spots.length === 0) return;
-    let nextIdx = s.playIndex + 1;
-    if (nextIdx >= s.project.spots.length) {
+    const spots = s.project.spots;
+    if (spots.length === 0) return;
+    
+    // Boundary check for current index
+    let currentIdx = s.playIndex;
+    if (currentIdx < 0 || currentIdx >= spots.length) currentIdx = -1;
+
+    let nextIdx = currentIdx + 1;
+    if (nextIdx >= spots.length) {
       if (s.playLoop) {
         nextIdx = 0;
       } else {
