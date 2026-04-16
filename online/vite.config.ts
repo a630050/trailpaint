@@ -15,8 +15,8 @@ export default defineConfig({
         theme_color: '#78350f',
         background_color: '#fdf8ef',
         display: 'standalone',
-        scope: '/trailpaint/app/',
-        start_url: '/trailpaint/app/',
+        scope: '/trailpaint/',
+        start_url: '/trailpaint/',
         icons: [
           {
             src: 'favicon.svg',
@@ -121,7 +121,7 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/trailpaint/app/',
+  base: '/trailpaint/',
   build: {
     outDir: '../app',
     emptyOutDir: true,
