@@ -135,6 +135,7 @@ function migrateProject(data: Record<string, unknown>): Project {
       desc: (s.desc as string) ?? '',
       photo: safePhoto,
       photoY: typeof s.photoY === 'number' ? Math.max(0, Math.min(100, s.photoY)) : undefined,
+      iconId: typeof s.iconId === 'string' ? s.iconId : 'pin',
       customEmoji: typeof s.customEmoji === 'string' ? s.customEmoji : undefined,
       num: typeof s.num === 'number' && s.num > 0 ? Math.round(s.num) : spots.length + 1,
       cardOffset: s.cardOffset && typeof (s.cardOffset as Record<string, unknown>).x === 'number'

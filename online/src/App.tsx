@@ -46,7 +46,6 @@ export default function App() {
   useUndoRedoKeys();
   const baseMode = useProjectStore((s) => s.baseMode);
   const sidebarOpen = useProjectStore((s) => s.sidebarOpen);
-  const [dragOver, setDragOver] = useState(false);
   const [exportPreviewImage, setExportPreviewImage] = useState<HTMLImageElement | null>(null);
   const [importWizardOpen, setImportWizardOpen] = useState(false);
 
@@ -98,14 +97,6 @@ export default function App() {
     setImportWizardOpen(true);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      loadImageFile(file);
-    }
-  }, []);
 
   return (
     <div className="app">

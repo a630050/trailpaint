@@ -8,7 +8,6 @@ export default function PlaybackManager() {
   const playing = useProjectStore((s) => s.playing);
   const playMode = useProjectStore((s) => s.playMode);
   const playInterval = useProjectStore((s) => s.playInterval);
-  const nextSpot = useProjectStore((s) => s.nextSpot);
   const spotsCount = useProjectStore((s) => s.project.spots.length);
   const togglePlay = useProjectStore((s) => s.togglePlay);
   

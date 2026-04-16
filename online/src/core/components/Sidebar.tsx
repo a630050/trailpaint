@@ -43,7 +43,6 @@ export default function Sidebar({ onFlyTo, onOpenExportPreview, onSave, onOpenIm
   const selectedRoute = routes.find((r) => r.id === selectedRouteId) ?? null;
 
   const addSpot = useProjectStore((s) => s.addSpot);
-  const spotsCount = useProjectStore((s) => s.project.spots.length);
 
   const handleSelect = (id: string) => {
     setSelectedSpot(id);

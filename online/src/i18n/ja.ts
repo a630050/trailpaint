@@ -141,6 +141,16 @@ export default {
   'undo': '元に戻す',
   'redo': 'やり直す',
 
+  // Playback
+  'playback.title': '再生設定',
+  'playback.mode': '再生モード',
+  'playback.mode.auto': '自動再生',
+  'playback.mode.manual': '手動（クリック）',
+  'playback.interval': '間隔（秒）',
+  'playback.loop': 'ループ再生',
+  'playback.play': '再生',
+  'playback.stop': '停止',
+
   // Info & Settings
   'info.guide': 'クイックスタート',
   'info.step1': 'スポット追加：地図上に場所をマーク',
@@ -199,4 +209,5 @@ export default {
   'icon.warning': '注意',
   'icon.info': '案内',
   'icon.pin': 'マーカー',
+  'icon.camp': 'キャンプ',
 } as const;
