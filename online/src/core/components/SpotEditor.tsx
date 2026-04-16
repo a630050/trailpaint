@@ -81,6 +81,7 @@ export default function SpotEditor({ spot, onUpdate, onDelete, onClose }: SpotEd
       const delta = (touch.clientY - dragStartRef.current.y) / 2;
       const nextY = Math.max(0, Math.min(100, dragStartRef.current.py - delta));
       onUpdate({ photoY: nextY });
+      if (ev.cancelable) ev.preventDefault();
     };
 
     const onTouchEnd = () => {
@@ -178,6 +179,7 @@ export default function SpotEditor({ spot, onUpdate, onDelete, onClose }: SpotEd
               src={spot.photo} 
               alt="" 
               style={{ objectPosition: `center ${spot.photoY ?? 50}%` }}
+              draggable={false}
             />
           </div>
           <button className="spot-editor__photo-remove" onClick={() => onUpdate({ photo: null })}>

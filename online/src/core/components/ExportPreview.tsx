@@ -198,6 +198,7 @@ export default function ExportPreview({ baseImage, onClose, onAdjust }: ExportPr
       if (ok) showToast(t('export.preview.shareCopied'));
     } catch (err) {
       console.error('Share link failed:', err);
+      showToast(t('export.failed'));
     }
   }, [project, showToast]);
 
@@ -227,11 +228,14 @@ export default function ExportPreview({ baseImage, onClose, onAdjust }: ExportPr
     }
   }, [routes, projectName, aiStyle, showToast]);
 
-  // Close on Escape
+  // Close on Escape & Toast Cleanup
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
   }, [onClose]);
 
   if (!baseImage) return null;
