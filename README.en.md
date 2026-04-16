@@ -44,7 +44,7 @@ Supports PWA — installable to your phone's home screen like a native app. Auto
 4. Click "Export" to open preview, choose ratio / border / style filter, download PNG
 ```
 
-First-time users get a 3-step tutorial. You can also load one of 6 example trails from the dropdown.
+First-time users get a 3-step tutorial. You can also load one of 8 example routes from the dropdown (including a London Museum Tour).
 
 ### Create Trails with AI
 
@@ -64,7 +64,7 @@ Click "Import" → "🤖 Create trail JSON with AI" → copy the prompt template
 ### Markers
 
 - 🖊️ **Route Drawing** — Hand-drawn dashed lines + directional arrows, 5-color auto-cycle
-- 📍 **Spot Cards** — Paper-textured hand-drawn style, with photos, 26 icon types, drag-to-position
+- 📍 **Spot Cards** — Paper-textured hand-drawn style, with photos, 31 icon types, drag-to-position
 - ✏️ **Route Editing** — Drag nodes to adjust, double-click to delete, change color
 - 🔎 **Zoom-Aware Cards** — Cards scale with map zoom level
 - 👆 **Touch Drag** — Drag cards with your finger on mobile
@@ -90,9 +90,9 @@ Click "Import" → "🤖 Create trail JSON with AI" → copy the prompt template
 
 ### Import
 
-- 📥 **Import Wizard** — Unified import: upload basemap / load JSON / import GPX
+- 📥 **Import Wizard** — Unified import: upload basemap / load JSON / import GPX, supports drag-and-drop files into the window
 - 🤖 **AI Tutorial** — Built-in prompt template to generate importable JSON with AI
-- 🌿 **Example Trails** — 6 famous Taiwan trails, one-click load
+- 🌿 **Example Routes** — 8 example routes (including London Museum Tour), one-click load
 
 ### Experience
 
@@ -102,10 +102,16 @@ Click "Import" → "🤖 Create trail JSON with AI" → copy the prompt template
 - 🌐 **Three Languages** — Chinese / English / Japanese, auto-detected
 - ☰ **Mobile Bottom Menu** — Floating action menu when sidebar is closed
 
-### POI Icons (26 types)
+### UX Enhancements
+
+- 🏁 **Fit All** — One-click zoom to show all spots and routes (including card bounds calculation)
+- ↕️ **Drag Reorder** — Drag spots in the list to reorder
+
+### POI Icons (31 types)
 
 🌿 Plant 🌸 Flower 🌲 Tree 🐦 Bird 🦋 Insect 💧 Water 🐟 Fish 🍄 Mushroom ⛰️ Rock
-🚻 Restroom 🚌 Bus Stop 🛋️ Rest Area ⛺ Camping 🥤 Restaurant 🚲 Bicycle 🅿️ Parking 🩺 First Aid 🏖️ Beach 🎠 Amusement
+🚻 Restroom 🚌 Bus Stop 🛋️ Rest Area ⛺ Camping 🥤 Restaurant 🍺 Bar ♨️ Hot Spring 🏢 Mall 🎬 Cinema 🚲 Bicycle 🅿️ Parking 🩺 First Aid 🏖️ Beach 🎠 Amusement
+△ Trig Point 🚩 Rally Point
 🔍 Viewpoint 🔭 Stargazing 📷 Photo Spot ⚠️ Caution ℹ️ Info 📍 Pin
 
 ---
