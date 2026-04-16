@@ -80,6 +80,7 @@ export default function SettingsPanel() {
           {' · '}
           © {new Date().getFullYear()} notoriouslab
         </p>
+        <p>修改者：徐承佑</p>
       </div>
     </div>
   );
