@@ -370,6 +370,12 @@
   color: #8b6a40;
 }
 
+.mode-toolbar__hint-sub {
+  font-size: 10px;
+  color: #a88c6a;
+  opacity: 0.85;
+}
+
 .mode-toolbar__action-btn {
   font-family: Georgia, serif;
   font-size: 12px;

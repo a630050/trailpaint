@@ -37,6 +37,8 @@ export default function ModeToolbar() {
             {currentDrawing.length === 0
               ? t('route.hintStart')
               : `${currentDrawing.length} ${t('route.hintPoints')}`}
+            <br />
+            <span className="mode-toolbar__hint-sub">{t('route.hintRightClick')}</span>
           </span>
           <button
             className="mode-toolbar__action-btn mode-toolbar__action-btn--finish"

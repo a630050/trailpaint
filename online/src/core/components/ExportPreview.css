@@ -284,6 +284,13 @@
   white-space: nowrap;
 }
 
+.export-preview__ai-hint {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  color: #78716c;
+  line-height: 1.5;
+}
+
 /* Toast */
 .export-preview__toast {
   position: absolute;

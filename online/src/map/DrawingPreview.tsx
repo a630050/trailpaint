@@ -25,6 +25,14 @@ export default function DrawingPreview() {
           center={pt}
           radius={5}
           pathOptions={{ color, fillColor: '#fff', fillOpacity: 1, weight: 2 }}
+          eventHandlers={{
+            contextmenu: (e) => {
+              // @ts-ignore - Leaflet event has originalEvent
+              e.originalEvent.preventDefault();
+              // @ts-ignore - store action
+              useProjectStore.getState().truncateDrawing(i);
+            }
+          }}
         />
       ))}
     </>

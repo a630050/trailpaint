@@ -72,15 +72,16 @@ export default function SettingsPanel() {
       {/* About */}
       <div className="settings-panel__title">{t('info.about')}</div>
       <div className="settings-panel__about">
-        <p>🌿 TrailPaint {t('info.tagline')}</p>
+        <p>🌿 TrailPaint 路小繪</p>
         <p>
+          原作：
           <a href="https://github.com/notoriouslab/trailpaint" target="_blank" rel="noopener noreferrer">
             GitHub
           </a>
           {' · '}
           © {new Date().getFullYear()} notoriouslab
         </p>
-        <p>修改者：徐承佑</p>
+        <p>修改：徐承佑</p>
       </div>
     </div>
   );

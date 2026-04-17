@@ -23,6 +23,7 @@ interface ProjectState {
   baseMode: BaseMode;
   bgImage: string | null;       // data URL of uploaded background image
   bgImageSize: { w: number; h: number } | null;
+  rotation: number;
 
   // Spot actions
   addSpot: (latlng: [number, number]) => void;
@@ -34,6 +35,7 @@ interface ProjectState {
 
   // Route actions
   addDrawingPoint: (latlng: [number, number]) => void;
+  truncateDrawing: (index: number) => void;
   finishRoute: () => void;
   cancelDrawing: () => void;
   addRoute: (route: Route) => void;
@@ -51,6 +53,8 @@ interface ProjectState {
   // UI
   setMode: (mode: Mode) => void;
   setSidebarOpen: (open: boolean) => void;
+  rotateMap: (delta: number) => void;
+  resetRotation: () => void;
   setMapView: (center: [number, number], zoom: number) => void;
   setProjectName: (name: string) => void;
   clearPendingFlyTo: () => void;
@@ -202,6 +206,7 @@ export const useProjectStore = create<ProjectState>()(
   playMode: 'auto',
   playInterval: 2000,
   playLoop: true,
+  rotation: 0,
 
   togglePlay: () => {
     const s = get();
@@ -345,6 +350,10 @@ export const useProjectStore = create<ProjectState>()(
 
   addDrawingPoint: (latlng) =>
     set((s) => ({ currentDrawing: [...s.currentDrawing, latlng] })),
+
+  truncateDrawing: (index) => set((s) => ({
+    currentDrawing: s.currentDrawing.slice(0, index + 1)
+  })),
 
   finishRoute: () => {
     const s = get();
@@ -559,6 +568,9 @@ export const useProjectStore = create<ProjectState>()(
   },
 
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
+
+  rotateMap: (delta) => set((s) => ({ rotation: (s.rotation + delta) % 360 })),
+  resetRotation: () => set({ rotation: 0 }),
 
   setMapView: (center, zoom) =>
     set((s) => ({ project: { ...s.project, center, zoom } })),

@@ -8,6 +8,7 @@ import {
 } from '../utils/exportRenderer';
 import { applyStyleFilter } from '../utils/styleFilters';
 import { encodeShareLink, shortenUrl } from '../utils/shareLink';
+import { generateGpx } from '../utils/gpxExporter';
 import { t, currentLocale } from '../../i18n';
 import './ExportPreview.css';
 
@@ -202,6 +203,22 @@ export default function ExportPreview({ baseImage, onClose, onAdjust }: ExportPr
     }
   }, [project, showToast]);
 
+  const handleDownloadGpx = useCallback(() => {
+    try {
+      const gpx = generateGpx(projectName, routes, project.spots);
+      const blob = new Blob([gpx], { type: 'application/gpx+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `trailpaint-${sanitizeFilename(projectName)}.gpx`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('GPX export failed:', err);
+      alert(t('export.failed'));
+    }
+  }, [projectName, routes, project.spots]);
+
   const handleShortenLink = useCallback(async () => {
     try {
       const url = await encodeShareLink(project);
@@ -330,6 +347,13 @@ export default function ExportPreview({ baseImage, onClose, onAdjust }: ExportPr
               >
                 {downloading ? t('export.preview.downloading') : t('export.preview.download')}
               </button>
+              <button
+                className="export-preview__btn"
+                onClick={handleDownloadGpx}
+                style={{ backgroundColor: '#f9fafb', borderColor: '#d1d5db' }}
+              >
+                💾 {t('export.preview.downloadGpx')}
+              </button>
               <div className="export-preview__btn-row">
                 <button
                   className="export-preview__btn"
@@ -363,6 +387,7 @@ export default function ExportPreview({ baseImage, onClose, onAdjust }: ExportPr
                   🤖 {t('export.preview.aiPrompt')}
                 </button>
               </div>
+              <p className="export-preview__ai-hint">{t('export.preview.aiHint')}</p>
             </div>
           </div>
         </div>

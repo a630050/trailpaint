@@ -8,6 +8,7 @@ import HandDrawnFilter from './HandDrawnFilter';
 import BasemapSwitcher from './BasemapSwitcher';
 import LocateButton from './LocateButton';
 import FitAllButton from './FitAllButton';
+import RotateButtons from './RotateButtons';
 import PlaybackManager from './PlaybackManager';
 import Watermark from './Watermark';
 import { setMapInstance, getMapInstance } from './useMapRef';
@@ -16,7 +17,9 @@ import './MapView.css';
 
 
 function MapClickHandler() {
+  const map = useMap();
   const mode = useProjectStore((s) => s.mode);
+  const rotation = useProjectStore((s) => s.rotation);
   const addSpot = useProjectStore((s) => s.addSpot);
   const addDrawingPoint = useProjectStore((s) => s.addDrawingPoint);
   const setSelectedSpot = useProjectStore((s) => s.setSelectedSpot);
@@ -31,7 +34,30 @@ function MapClickHandler() {
         nextSpot();
         return;
       }
-      const latlng: [number, number] = [e.latlng.lat, e.latlng.lng];
+
+      // When the map wrapper is CSS-rotated, Leaflet's coordinate conversion is
+      // based on the unrotated container. Apply inverse rotation to get the correct latlng.
+      let latlng: [number, number];
+      if (rotation === 0) {
+        latlng = [e.latlng.lat, e.latlng.lng];
+      } else {
+        const container = map.getContainer();
+        const rect = container.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const oe = e.originalEvent as MouseEvent;
+        const dx = oe.clientX - centerX;
+        const dy = oe.clientY - centerY;
+        const rad = -rotation * Math.PI / 180;
+        const rdx = dx * Math.cos(rad) - dy * Math.sin(rad);
+        const rdy = dx * Math.sin(rad) + dy * Math.cos(rad);
+        const pt = map.containerPointToLatLng([
+          rdx + container.offsetWidth / 2,
+          rdy + container.offsetHeight / 2,
+        ]);
+        latlng = [pt.lat, pt.lng];
+      }
+
       switch (mode) {
         case 'select':
           setSelectedSpot(null);
@@ -103,32 +129,41 @@ function CursorHandler() {
 export default function MapView() {
   const center = useProjectStore((s) => s.project.center);
   const zoom = useProjectStore((s) => s.project.zoom);
+  const rotation = useProjectStore((s) => s.rotation);
 
   return (
-    <MapContainer
-      center={center}
-      zoom={zoom}
-      minZoom={3}
-      maxZoom={18}
-      zoomSnap={0.5}
-      zoomDelta={0.5}
-      wheelPxPerZoomLevel={150}
-      style={{ width: '100%', height: '100%' }}
-      zoomControl={false}
-    >
-      <ZoomControl position="bottomright" />
-      <BasemapSwitcher />
-      <LocateButton />
-      <FitAllButton />
-      <HandDrawnFilter />
-      <MapClickHandler />
-      <MapSync />
-      <CursorHandler />
-      <PlaybackManager />
-      <RouteLayer />
-      <DrawingPreview />
-      <SpotMarkers />
-      <Watermark />
-    </MapContainer>
+    <div className="map-wrapper">
+      <div
+        className="map-rotation-container"
+        style={{ transform: `rotate(${rotation}deg)` }}
+      >
+        <MapContainer
+          center={center}
+          zoom={zoom}
+          minZoom={3}
+          maxZoom={18}
+          zoomSnap={0.5}
+          zoomDelta={0.5}
+          wheelPxPerZoomLevel={150}
+          style={{ width: '100%', height: '100%' }}
+          zoomControl={false}
+        >
+          <ZoomControl position="bottomright" />
+          <BasemapSwitcher />
+          <LocateButton />
+          <FitAllButton />
+          <HandDrawnFilter />
+          <MapClickHandler />
+          <MapSync />
+          <CursorHandler />
+          <PlaybackManager />
+          <RouteLayer />
+          <DrawingPreview />
+          <SpotMarkers />
+          <Watermark />
+        </MapContainer>
+      </div>
+      <RotateButtons />
+    </div>
   );
 }
